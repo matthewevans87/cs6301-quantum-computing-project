@@ -1,0 +1,110 @@
+\documentclass[12pt]{article}
+% \documentclass[12pt]{IEEEtran}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsfonts,amsmath,amsthm,amssymb,dsfont,mathtools}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{bookmark}
+\usepackage{cite}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{braket}
+\usepackage{tikz}
+\newcommand{\ketbra}[2]{\mathinner{|{#1}\rangle \langle{#2}|}}
+\newcommand*\xor{\oplus}
+\bibdata{references}
+\usetikzlibrary{quantikz2}
+
+\geometry{a4paper, margin=1in}
+
+
+\title{\Large{Response to Ramesh \& Vinay, (2003)\\ \small{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}} }}
+
+\author{%
+\normalsize{Matthew Evans, Ariz Siddiqui, Nathan Puskuri}
+}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Citation Example}
+This is a dummy citation \cite{RameshH2003SmiO}.
+
+\section{Matrix and Align Examples}
+\begin{align*}
+    H & = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} \\
+    X & = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}                    \\
+    Y & = \begin{bmatrix} 0 & -i \\ i & 0 \end{bmatrix}                   \\
+    Z & = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}
+\end{align*}
+
+\[
+    \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & -1 \end{bmatrix}
+\]
+
+\section{Quantikz examples}
+\begin{center}
+    \begin{quantikz}
+        & & \\
+        & \gate{H}&
+    \end{quantikz}
+\end{center}
+
+\begin{figure}[ht]
+    \resizebox{.5\textwidth}{!}{
+        \centering
+        \begin{quantikz}
+            &         &        &                &\ctrl{2}&        &        &                & \ctrl{2}&                &\ctrl{1}&                &\ctrl{1}&\gate{T}&\\
+            &         &\ctrl{1}&                &        &        &\ctrl{1}&                &         &\gate{T^\dagger}&\targ{} &\gate{T^\dagger}&\targ{} &\gate{S}&\\
+            &\gate{H} &\targ{} &\gate{T^\dagger}&\targ{} &\gate{T}&\targ{}  &\gate{T^\dagger}&\targ{} &\gate{T}        &\gate{H}                 &        &        & &
+        \end{quantikz}
+    }
+\end{figure}
+
+\begin{quantikz}
+    &\gate{X} & \ctrl{1} & \\
+    & & \targ{} &
+\end{quantikz}
+
+\begin{quantikz}
+    & \ctrl{1} & \gate{X} & \\
+    & \targ{} & \gate{X} &
+\end{quantikz}
+
+\begin{quantikz}
+    & \ctrl{1} & \\
+    & \gate{Z}&
+\end{quantikz}
+
+\begin{quantikz}
+    & \gate{Z} & \\
+    & \ctrl{-1}&
+\end{quantikz}
+
+\section{Bra-Ket examples}
+
+\[
+    \begin{aligned}
+        \ket{\Psi} & = \frac{1}{\sqrt{2}}\Bigl[H\ket{0}(\alpha \ket{\phi_+} + \beta \ket{\phi_-})
+        + H\ket{1}(\alpha \ket{\phi_+} - \beta \ket{\phi_-})\Bigr]                                                                                 \\
+                   & =\frac{1}{2}\Bigl\{\ket{0}\Bigl[(\alpha \ket{\phi_+} + \beta \ket{\phi_-})+ (\alpha \ket{\phi_+} - \beta \ket{\phi_-})\Bigr]  \\
+                   & \quad\quad + \ket{1}\Bigl[(\alpha \ket{\phi_+} + \beta \ket{\phi_-})- (\alpha \ket{\phi_+} - \beta \ket{\phi_-})\Bigr]\Bigr\} \\
+                   & =\alpha \ket{0}\ket{\phi_+} + \beta \ket{1}\ket{\phi_-}.
+    \end{aligned}
+\]
+
+\begin{align*}
+    \ket{\psi_1} = \ket{0} & : \ket{\psi_2} \rightarrow \ket{\psi_2}   \\
+    \ket{\psi_1} = \ket{1} & : \ket{\psi_2} \rightarrow Z\ket{\psi_2}.
+\end{align*}
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+
+\end{document}
