@@ -27,84 +27,57 @@
 \normalsize{Matthew Evans, Ariz Siddiqui, Nathan Puskuri}
 }
 \date{\today}
-
 \begin{document}
+
 \maketitle
 
-\section{Citation Example}
-This is a dummy citation \cite{RameshH2003SmiO}.
+\section*{Overview}
+\textit{Ramesh \& Vinay, (2003)}\cite{RameshH2003SmiO} addresses the problem of efficiently determining whether a smaller string (pattern) appears within a larger one (text). Traditional solutions to this problem on classical computers take time roughly proportional to the total length of both the pattern and the text. The authors aim to speed up this process using quantum computing methods, specifically aiming for a faster-than-classical algorithm that leverages the advantages of quantum search techniques.
 
-\section{Matrix and Align Examples}
-\begin{align*}
-    H & = \frac{1}{\sqrt{2}}\begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix} \\
-    X & = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}                    \\
-    Y & = \begin{bmatrix} 0 & -i \\ i & 0 \end{bmatrix}                   \\
-    Z & = \begin{bmatrix} 1 & 0 \\ 0 & -1 \end{bmatrix}
-\end{align*}
+\section*{Approach}
+\subsection*{Novelty}
+The paper introduces a novel integration of \textit{Grover's algorithm} with \textit{Deterministic Sampling} to achieve improved efficiency in quantum string matching. By partitioning the text into blocks and using a \textit{probabilistic oracle} to identify promising blocks, the algorithm avoids the need to check every alignment between the pattern and text. Within each promising block, Deterministic Sampling quickly eliminates unlikely matches, focusing only on the most viable candidates. This hybrid quantum-classical approach improves the time complexity to \(\tilde{O}(\sqrt{n} + \sqrt{m})\), surpassing prior quantum methods that applied Grover's algorithm directly to all alignments, which had a complexity of \(\tilde{O}(\sqrt{n m})\). This layered strategy represents a significant advancement in quantum algorithms for pattern detection.
 
-\[
-    \begin{bmatrix} 1 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & -1 \end{bmatrix}
-\]
+\subsection*{Grover's Algorithm}
+Grover's algorithm is a quantum search technique that identifies a marked item within an unstructured list of \(n\) elements in \(O(\sqrt{n})\) time, offering a quadratic speedup over classical methods. It leverages quantum superposition and interference to amplify the probability of the correct solution. In this paper, Grover's algorithm is employed to locate potential text positions where the pattern may match.
 
-\section{Quantikz examples}
-\begin{center}
-    \begin{quantikz}
-        & & \\
-        & \gate{H}&
-    \end{quantikz}
-\end{center}
+The algorithm operates as follows:
+\begin{enumerate}
+    \item Prepare a quantum register in an equal superposition of all \(n\) indices.
+    \item Use an oracle to invert the amplitude of the marked state(s).
+    \item Apply the Grover diffusion operator to amplify the probability of the marked state(s).
+    \item Repeat the oracle and diffusion steps approximately \(\lfloor \frac{\pi}{4}\sqrt{n} \rfloor\) times.
+    \item Measure the quantum register to retrieve the index of the marked item with high probability.
+\end{enumerate}
+This process is integral to the hybrid approach, enabling efficient identification of promising text regions for further analysis.
 
-\begin{figure}[ht]
-    \resizebox{.5\textwidth}{!}{
-        \centering
-        \begin{quantikz}
-            &         &        &                &\ctrl{2}&        &        &                & \ctrl{2}&                &\ctrl{1}&                &\ctrl{1}&\gate{T}&\\
-            &         &\ctrl{1}&                &        &        &\ctrl{1}&                &         &\gate{T^\dagger}&\targ{} &\gate{T^\dagger}&\targ{} &\gate{S}&\\
-            &\gate{H} &\targ{} &\gate{T^\dagger}&\targ{} &\gate{T}&\targ{}  &\gate{T^\dagger}&\targ{} &\gate{T}        &\gate{H}                 &        &        & &
-        \end{quantikz}
-    }
-\end{figure}
+\subsection*{Deterministic Sampling}
+Deterministic Sampling is a classical technique that reduces the computational effort in pattern matching by focusing on a strategically chosen subset of positions within the pattern. By comparing only these key positions, it becomes possible to quickly eliminate non-matching candidates, significantly narrowing down the search space.
 
-\begin{quantikz}
-    &\gate{X} & \ctrl{1} & \\
-    & & \targ{} &
-\end{quantikz}
+The method operates as follows:
+\begin{enumerate}
+    \item Partition the pattern into overlapping segments aligned at successive positions.
+    \item Select a subset of positions (the ``deterministic sample'') that can effectively distinguish a match from non-matches.
+    \item Compare the characters at the sampled positions for each candidate alignment in the text.
+    \item Discard alignments that fail to match at the sampled positions.
+    \item Perform a full pattern verification only on the remaining candidates.
+\end{enumerate}
+In the proposed hybrid algorithm, Deterministic Sampling complements Grover's algorithm by efficiently filtering out unlikely matches, allowing quantum resources to focus on the most promising candidates.
 
-\begin{quantikz}
-    & \ctrl{1} & \gate{X} & \\
-    & \targ{} & \gate{X} &
-\end{quantikz}
 
-\begin{quantikz}
-    & \ctrl{1} & \\
-    & \gate{Z}&
-\end{quantikz}
+\section*{Considerations}
+One risk of this approach is that it relies on probabilistic oracles, which only give correct answers with high probability. This introduces a chance of error, though it can be reduced with repeated trials. Also, the algorithm's effectiveness depends on the nature of the pattern—specifically whether it is periodic or not—which affects how efficiently it can be preprocessed.
 
-\begin{quantikz}
-    & \gate{Z} & \\
-    & \ctrl{-1}&
-\end{quantikz}
+However, the algorithm's strengths are considerable. It significantly reduces runtime in theory, demonstrating the potential for quantum computing to outperform classical methods in practical string processing tasks. The careful integration of quantum and classical techniques is particularly promising.
 
-\section{Bra-Ket examples}
+\section*{Measures of Success}
+The authors measure success based on time complexity and correctness. Their algorithm achieves a theoretical time complexity of \(\tilde{O}(\sqrt{n} + \sqrt{m})\), improving upon prior quantum approaches. Correctness is evaluated probabilistically, leveraging oracles that produce correct results with a constant probability greater than \(1/2\). This probability can be amplified to approach \(1\) using standard repetition and amplification techniques.
 
-\[
-    \begin{aligned}
-        \ket{\Psi} & = \frac{1}{\sqrt{2}}\Bigl[H\ket{0}(\alpha \ket{\phi_+} + \beta \ket{\phi_-})
-        + H\ket{1}(\alpha \ket{\phi_+} - \beta \ket{\phi_-})\Bigr]                                                                                 \\
-                   & =\frac{1}{2}\Bigl\{\ket{0}\Bigl[(\alpha \ket{\phi_+} + \beta \ket{\phi_-})+ (\alpha \ket{\phi_+} - \beta \ket{\phi_-})\Bigr]  \\
-                   & \quad\quad + \ket{1}\Bigl[(\alpha \ket{\phi_+} + \beta \ket{\phi_-})- (\alpha \ket{\phi_+} - \beta \ket{\phi_-})\Bigr]\Bigr\} \\
-                   & =\alpha \ket{0}\ket{\phi_+} + \beta \ket{1}\ket{\phi_-}.
-    \end{aligned}
-\]
+The analysis guarantees that if the pattern occurs, it will be detected with high probability, and non-occurrences will similarly be identified correctly. Specifically, the algorithm ensures correctness with a failure probability that can be made arbitrarily small by incurring logarithmic overhead in runtime. These measures demonstrate the algorithm's efficiency and reliability in addressing the string matching problem.
 
-\begin{align*}
-    \ket{\psi_1} = \ket{0} & : \ket{\psi_2} \rightarrow \ket{\psi_2}   \\
-    \ket{\psi_1} = \ket{1} & : \ket{\psi_2} \rightarrow Z\ket{\psi_2}.
-\end{align*}
-
+\section*{Impact}
+This paper has both theoretical and practical significance. Theoretically, it showcases how integrating classical and quantum methods can achieve superior performance, setting a precedent for hybrid algorithm design. Practically, it highlights the potential of quantum computing to address large-scale string matching problems, such as genomic analysis or information retrieval, more efficiently than classical approaches. These contributions may guide the development of future quantum algorithms for structured data processing.
 
 \bibliographystyle{plain}
 \bibliography{references}
-
-
 \end{document}
