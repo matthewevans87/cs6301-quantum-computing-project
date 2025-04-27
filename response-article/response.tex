@@ -1,5 +1,4 @@
-\documentclass[12pt]{article}
-% \documentclass[12pt]{IEEEtran}
+\documentclass[12pt]{IEEEtran}
 
 \usepackage[utf8]{inputenc}
 \usepackage{amsfonts,amsmath,amsthm,amssymb,dsfont,mathtools}
@@ -13,6 +12,7 @@
 \usepackage{algpseudocode}
 \usepackage{braket}
 \usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning}
 \newcommand{\ketbra}[2]{\mathinner{|{#1}\rangle \langle{#2}|}}
 \newcommand*\xor{\oplus}
 \bibdata{references}
@@ -31,52 +31,84 @@
 
 \maketitle
 
-\section*{Overview}
-\textit{Ramesh \& Vinay, (2003)}\cite{RameshH2003SmiO} addresses the problem of efficiently determining whether a smaller string (pattern) appears within a larger one (text). Traditional solutions to this problem on classical computers take time roughly proportional to the total length of both the pattern and the text. The authors aim to speed up this process using quantum computing methods, specifically aiming for a faster-than-classical algorithm that leverages the advantages of quantum search techniques.
+\section{Overview}
+\textit{Ramesh \& Vinay, (2003)}\cite{RameshH2003SmiO} addresses the problem of efficiently determining whether a smaller string (pattern) appears within a larger one (text). Traditional solutions to this problem on classical computers take time roughly proportional to the total length of both the pattern and the text. The authors propose a quantum algorithm that determines the existence of a match with probability better than \(\frac{1}{2}\). While constrained in scope, their approach demonstrates how quantum computing methods, particularly quantum search techniques, can potentially achieve faster-than-classical performance for specific string matching scenarios.
 
-\section*{Approach}
-\subsection*{Novelty}
-The paper introduces a novel integration of \textit{Grover's algorithm} with \textit{Deterministic Sampling} to achieve improved efficiency in quantum string matching. By partitioning the text into blocks and using a \textit{probabilistic oracle} to identify promising blocks, the algorithm avoids the need to check every alignment between the pattern and text. Within each promising block, Deterministic Sampling quickly eliminates unlikely matches, focusing only on the most viable candidates. This hybrid quantum-classical approach improves the time complexity to \(\tilde{O}(\sqrt{n} + \sqrt{m})\), surpassing prior quantum methods that applied Grover's algorithm directly to all alignments, which had a complexity of \(\tilde{O}(\sqrt{n m})\). This layered strategy represents a significant advancement in quantum algorithms for pattern detection.
+We will first cover the concepts and dependencies to which the authors appeal, and then explain how these pieces fit together to support the authors' claims.
 
-\subsection*{Grover's Algorithm}
-Grover's algorithm is a quantum search technique that identifies a marked item within an unstructured list of \(n\) elements in \(O(\sqrt{n})\) time, offering a quadratic speedup over classical methods. It leverages quantum superposition and interference to amplify the probability of the correct solution. In this paper, Grover's algorithm is employed to locate potential text positions where the pattern may match.
-
-The algorithm operates as follows:
+\section{Preliminaries}
+\subsection{Grover's Algorithm}
+Grover's algorithm \cite{grover1996fastquantummechanicalalgorithm} addresses the problem of locating one of \(t\) marked items in an unsorted database of \(N\) entries with a quadratic speedup over classical search. The procedure comprises the following steps:
 \begin{enumerate}
-    \item Prepare a quantum register in an equal superposition of all \(n\) indices.
-    \item Use an oracle to invert the amplitude of the marked state(s).
-    \item Apply the Grover diffusion operator to amplify the probability of the marked state(s).
-    \item Repeat the oracle and diffusion steps approximately \(\lfloor \frac{\pi}{4}\sqrt{n} \rfloor\) times.
-    \item Measure the quantum register to retrieve the index of the marked item with high probability.
+    \item Initialize a superposition over all \(N\) basis states.
+    \item Apply the oracle \(O_f\) to flip the phase of the \(t\) marked states.
+    \item Perform the diffusion operator to reflect amplitudes about their average.
+    \item Repeat the oracle and diffusion operations approximately \(\frac{\pi}{4}\sqrt{N/t}\) times.
+    \item Measure the register to obtain a marked element with high probability.
 \end{enumerate}
-This process is integral to the hybrid approach, enabling efficient identification of promising text regions for further analysis.
+Running in \(O(\sqrt{N/t})\) time, Grover's algorithm provides the core quantum search subroutine underpinning the \(\widetilde{O}(\sqrt{n}+\sqrt{m})\) string-matching algorithm.
 
-\subsection*{Deterministic Sampling}
-Deterministic Sampling is a classical technique that reduces the computational effort in pattern matching by focusing on a strategically chosen subset of positions within the pattern. By comparing only these key positions, it becomes possible to quickly eliminate non-matching candidates, significantly narrowing down the search space.
+\subsection{Tight Bounds on Grover's (BBHT96)}
+\cite[Boyer, Brassard, Høyer, and Tapp]{Boyer_1998} show that even when the exact number of target items \(t\) in an unsorted database of size \(N\) is unknown, one can still locate a marked element in \(O(\sqrt(N/t))\) oracle calls with constant success probability. Their procedure adaptively adjusts the number of Grover iterations to achieve the same quadratic speedup without prior knowledge of \(t\). In our string-matching algorithm, this result is crucial: when searching a text block of length \(m/2\) for any matching alignment, we do not know in advance how many alignments will succeed, so we invoke BBHT96's method to retain the overall \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) runtime bound.
 
-The method operates as follows:
+\subsection{Deterministic Sampling (VI)}
+Deterministic sampling, introduced by \cite[Vishkin]{10.1145/100216.100235} is a procedure for reducing the number of expensive pattern-matching checks on an aperiodic pattern \(p\) of length \(m\).  When matching \(p\) against a text block of length \(m/2\), there are \(m/2\) possible alignments.  Deterministic sampling picks \(O(\log m)\) indices in the pattern such that at most one alignment can match at all of these sample positions.  The procedure is:
+
 \begin{enumerate}
-    \item Partition the pattern into overlapping segments aligned at successive positions.
-    \item Select a subset of positions (the ``deterministic sample'') that can effectively distinguish a match from non-matches.
-    \item Compare the characters at the sampled positions for each candidate alignment in the text.
-    \item Discard alignments that fail to match at the sampled positions.
-    \item Perform a full pattern verification only on the remaining candidates.
+    \item Form \(m/2\) ``copies'' of the pattern, each shifted by one position.
+    \item Identify a column (i.e. pattern index) where at least two copies have different symbols.
+    \item Choose one of the observed symbols as the sample value and discard all copies that do not match it.
+    \item Repeat the previous two steps \(O(\log m)\) times until only one copy remains.
+    \item Collect the chosen columns; these indices constitute the deterministic sample \(S\).
 \end{enumerate}
-In the proposed hybrid algorithm, Deterministic Sampling complements Grover's algorithm by efficiently filtering out unlikely matches, allowing quantum resources to focus on the most promising candidates.
 
+Because only the single surviving alignment must undergo a full (quantum) check of cost \(\tilde O(\sqrt m)\), deterministic sampling reduces the number of such expensive checks per text block from \(m\) to \(1\).  This reduction is crucial to achieving the overall \(\widetilde{O}(\sqrt n + \sqrt m)\) runtime of the quantum string-matching algorithm.
 
-\section*{Considerations}
-One risk of this approach is that it relies on probabilistic oracles, which only give correct answers with high probability. This introduces a chance of error, though it can be reduced with repeated trials. Also, the algorithm's effectiveness depends on the nature of the pattern—specifically whether it is periodic or not—which affects how efficiently it can be preprocessed.
+\subsection{Minimum Finding Oracle}
+The minimum-finding oracle given by \cite[Durr \& Høyer]{durr1999quantumalgorithmfindingminimum} locates the index of the smallest element in an unsorted database of size \(n\) in \(O(\sqrt{n})\) time using a comparison oracle. Beginning from a random index \(k\), it invokes Grover's algorithm to find any index \(i\) such that \(\text{database}[i]<\text{database}[k]\). If one is found, \(k\) is updated to \(i\) and the search repeats; if not, \(k\) is the minimum. This primitive underlies every ``pick the smallest (or leftmost) index satisfying some condition'' step in the paper. It is used to build the deterministic sample for aperiodic patterns—repeatedly halving the \(m/2\) candidate alignments in \(\widetilde{O}(\sqrt{m}\log m)\) time—and is invoked a second time to pinpoint the earliest text block containing the match, thereby preserving the overall \(\widetilde{O}(\sqrt{n}+\sqrt{m})\) runtime bound.
 
-However, the algorithm's strengths are considerable. It significantly reduces runtime in theory, demonstrating the potential for quantum computing to outperform classical methods in practical string processing tasks. The careful integration of quantum and classical techniques is particularly promising.
+\begin{figure*}[!t]
+    \centering
+    \begin{tikzpicture}[
+        >={Stealth[]},
+        every node/.style={font=\small, text width=3cm, align=center},
+        node distance=1.5cm and 2.5cm
+        ]
+        % Nodes with plain text only
+        \node (proposed)  {Quantum String-Matching};
+        \node (vi) [above=of proposed] {Deterministic Sampling (VI)};
+        \node (grover) [above=of vi] {Grover's};
+        \node (bbht) [below left=of grover] {Tight Bounds on Grover's (BBHT96)};
+        \node (dh) [below right=of grover]  {Minimum-Finding Oracle (DH)};
+        \node (aper) [below=of dh] {Aperiodic Patterns};
+        \node (periodic) [below=of bbht] {Periodic Patterns};
+        \node (time) [below=of periodic] {Time: $\widetilde{O}(\sqrt{n}+\sqrt{m})$};
+        \node (prob) [below=of aper]{Constant Two-Sided Failure Probability};
 
-\section*{Measures of Success}
-The authors measure success based on time complexity and correctness. Their algorithm achieves a theoretical time complexity of \(\tilde{O}(\sqrt{n} + \sqrt{m})\), improving upon prior quantum approaches. Correctness is evaluated probabilistically, leveraging oracles that produce correct results with a constant probability greater than \(1/2\). This probability can be amplified to approach \(1\) using standard repetition and amplification techniques.
+        % Curvy edges
+        \draw[->, bend right]  (grover)   to (bbht);
+        \draw[->, bend left] (grover)   to (dh);
+        \draw[->, bend left]  (bbht)     to (proposed);
+        \draw[->, bend right] (dh)       to (proposed);
+        \draw[->]  (vi)       to (proposed);
+        \draw[->, bend left]  (aper)     to (proposed);
+        \draw[->, bend right] (periodic) to (proposed);
+        \draw[->, bend left]  (proposed) to (time);
+        \draw[->, bend right] (proposed) to (prob);
+    \end{tikzpicture}
+    \caption{Conceptual dependencies in the $\widetilde{O}(\sqrt{n}+\sqrt{m})$ quantum string-matching algorithm.}
+    \label{fig:quantum-string-matching}
+\end{figure*}
 
-The analysis guarantees that if the pattern occurs, it will be detected with high probability, and non-occurrences will similarly be identified correctly. Specifically, the algorithm ensures correctness with a failure probability that can be made arbitrarily small by incurring logarithmic overhead in runtime. These measures demonstrate the algorithm's efficiency and reliability in addressing the string matching problem.
+\section{Quantum String Matching}
 
-\section*{Impact}
-This paper has both theoretical and practical significance. Theoretically, it showcases how integrating classical and quantum methods can achieve superior performance, setting a precedent for hybrid algorithm design. Practically, it highlights the potential of quantum computing to address large-scale string matching problems, such as genomic analysis or information retrieval, more efficiently than classical approaches. These contributions may guide the development of future quantum algorithms for structured data processing.
+\subsection{Concerning Periodicity}
+% discuss periodic vs. aperiodic patterns
+
+\subsection{Constant Two-Sided Failure Probability}
+% discuss the importance of the constant two-sided failure probability as mentioned in the paper
+\subsection{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
+% bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
 
 \bibliographystyle{plain}
 \bibliography{references}
