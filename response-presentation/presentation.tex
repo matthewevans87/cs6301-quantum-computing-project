@@ -103,6 +103,34 @@
     \end{itemize}
 \end{frame}
 
+\subsection{Tight bounds on quantum searching}
+\begin{frame}{BBHT96: Tight bounds on quantum searching}
+    \begin{block}{What it is}
+        \begin{itemize}
+            \item Even when the number of target \(t \ge 1\) items in a database is unknown,
+                  you can still find a marked item in \(\tilde O(\sqrt{N/t})\) oracle calls.
+            \item BBHT96 describes a procedure which, given an oracle flagging at least \(t\) marked
+                  elements among \(n\) candidates, returns one solution in \(O(\sqrt{n/t})\) time
+                  with constant success probability.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{BBHT96: Tight bounds on quantum searching}
+
+    \begin{block}{Why it matters}
+        \begin{itemize}
+            \item It underpins the claimed time bound in our string-matching algorithm.
+            \item When checking a text block (size \(m/2\)) for any matching alignment, \(t\) is unknown.
+            \item BBHT96's procedure lets us invoke Grover's search reliably in this setting.
+            \item Every oracle in the string-matching pipeline (e.g.\ \(f, h\)) relies on BBHT96's bound
+                  to guarantee the \(\tilde O(\sqrt n + \sqrt m)\) runtime.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
 \subsection{Deterministic Sampling}
 \begin{frame}{Deterministic Sampling}
     \begin{block}{What it is}
@@ -137,32 +165,6 @@
     \end{block}
 \end{frame}
 
-\subsection{Tight bounds on quantum searching}
-\begin{frame}{BBHT96: Tight bounds on quantum searching}
-    \begin{block}{What it is}
-        \begin{itemize}
-            \item Even when the number of target \(t \ge 1\) items in a database is unknown,
-                  you can still find a marked item in \(\tilde O(\sqrt{N/t})\) oracle calls.
-            \item BBHT96 describes a procedure which, given an oracle flagging at least \(t\) marked
-                  elements among \(n\) candidates, returns one solution in \(O(\sqrt{n/t})\) time
-                  with constant success probability.
-        \end{itemize}
-    \end{block}
-\end{frame}
-
-
-\begin{frame}{BBHT96: Tight bounds on quantum searching}
-
-    \begin{block}{Why it matters}
-        \begin{itemize}
-            \item It underpins the claimed time bound in our string-matching algorithm.
-            \item When checking a text block (size \(m/2\)) for any matching alignment, \(t\) is unknown.
-            \item BBHT96's procedure lets us invoke Grover's search reliably in this setting.
-            \item Every oracle in the string-matching pipeline (e.g.\ \(f, h\)) relies on BBHT96's bound
-                  to guarantee the \(\tilde O(\sqrt n + \sqrt m)\) runtime.
-        \end{itemize}
-    \end{block}
-\end{frame}
 
 \subsection{Minimum Finding Oracle}
 \begin{frame}{DH96: Minimum Finding Oracle}
@@ -184,7 +186,6 @@
         \end{enumerate}
     \end{block}
 \end{frame}
-
 
 \begin{frame}{DH96: Minimum Finding Oracle}
 
