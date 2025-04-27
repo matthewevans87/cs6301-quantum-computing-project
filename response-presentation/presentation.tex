@@ -4,6 +4,9 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows.meta,positioning}
+\usetikzlibrary{quantikz2}
 
 \title{\Large{Response to Ramesh \& Vinay, (2003)} \\
 \small{\texorpdfstring{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
@@ -22,29 +25,203 @@
 \end{frame}
 
 \section{Introduction}
-\begin{frame}{Introduction}
+\begin{frame}{\texorpdfstring{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
+    \normalsize
+    H.\ Ramesh \& V.\ Vinay (IISc Bangalore, 2000)\\
+    \vfill
+    \begin{block}{Problem Statement}
+        Given a text $t$ of length $n$ and a pattern $p$ of length $m$, decide whether $p$ occurs in $t$.
+    \end{block}
+    \vfill
     \begin{itemize}
-        \item Point 1
-        \item Point 2
-        \item Point 3
+        \item \textbf{Classical bound:} $\Theta(n + m)$ via KMP, Boyer-Moore, etc.
+        \item \textbf{Quantum goal:} Exploit amplitude amplification to beat linear time.
+        \item \textbf{Main result:} A quantum algorithm running in
+              \[
+                  \widetilde{O}\bigl(\sqrt{n} + \sqrt{m}\bigr)
+              \]
+              with constant two-sided error probability.
     \end{itemize}
 \end{frame}
 
-\section{Main Content}
-\begin{frame}{Main Content}
+
+\begin{frame}
+    \begin{figure}
+        \centering
+        \resizebox{1\textwidth}{!}{%
+            \begin{tikzpicture}[
+                scale=0.8,
+                >={Stealth[]},
+                every node/.style={font=\small, text width=3cm, align=center},
+                node distance=1.5cm and 2.5cm
+                ]
+                % Nodes with plain text only
+                \node (proposed)  {Quantum String-Matching};
+                \node (vi)       [above=of proposed]      {Deterministic Sampling (VI)};
+                \node (grover)   [above=of vi]            {Grover's};
+                \node (bbht)     [below left=of grover]   {Tight Bounds on Grover's (BBHT96)};
+                \node (dh)       [below right=of grover]  {Minimum-Finding Oracle (DH)};
+                \node (aper)     [below=of dh]            {Aperiodic Patterns};
+                \node (periodic) [below=of bbht]          {Periodic Patterns};
+                \node (time)     [below=of periodic]      {Time: $\widetilde{O}(\sqrt{n}+\sqrt{m})$};
+                \node (prob)     [below=of aper]          {Constant Two-Sided Failure Probability};
+
+                % Curvy edges
+                \draw[->, bend right]  (grover)   to (bbht);
+                \draw[->, bend left]   (grover)   to (dh);
+                \draw[->, bend left]   (bbht)     to (proposed);
+                \draw[->, bend right]  (dh)       to (proposed);
+                \draw[->]              (vi)       to (proposed);
+                \draw[->, bend left]   (aper)     to (proposed);
+                \draw[->, bend right]  (periodic) to (proposed);
+                \draw[->, bend left]   (proposed) to (time);
+                \draw[->, bend right]  (proposed) to (prob);
+            \end{tikzpicture}%
+        }
+        \caption{Conceptual dependencies in the $\widetilde{O}(\sqrt{n}+\sqrt{m})$ quantum string‑matching algorithm.}
+        \label{fig:quantum-string-matching}
+    \end{figure}
+\end{frame}
+
+\section{Preliminaries}
+
+\subsection{Grover's Algorithm}
+\begin{frame}{Grover's Algorithm}
     \begin{itemize}
-        \item Key Idea 1
-        \item Key Idea 2
-        \item Key Idea 3
+        \item Problem: Given a database of \(N\) elements and oracle \(f(x)=1\) for marked items, find an \(x\) with \(f(x)=1\).
+        \item Steps:
+              \begin{enumerate}
+                  \item Initialize \(n\) qubits into uniform superposition over \(N=2^n\) states.
+                  \item Apply the oracle to flip the phase of marked states.
+                  \item Perform the diffusion (inversion-about-the-mean) operator.
+                  \item Repeat oracle + diffusion \(\bigl\lfloor\frac{\pi}{4}\sqrt{N/t}\bigr\rfloor\) times (\(t\)=\# marked).
+                  \item Measure to obtain a marked element with high probability.
+              \end{enumerate}
+        \item Time Complexity: \(\mathcal{O}\!\bigl(\sqrt{N/t}\bigr)\).
+        \item Why it works: Oracle phase-flips mark targets; diffusion amplifies their amplitudes.
+        \item Significance: Core building block for quantum search algorithms.
     \end{itemize}
 \end{frame}
+
+\subsection{Deterministic Sampling}
+\begin{frame}{Deterministic Sampling}
+    \begin{block}{What it is}
+        \begin{itemize}
+            \item Given an aperiodic pattern \(p\) of length \(m\), and a text block of length \(m/2\), there are \(m/2\) possible alignments.
+            \item DS picks \(O(\log m)\) indices in the pattern so that at most one alignment can match all sampled positions.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Steps}
+        \begin{enumerate}
+            \item Form \(m/2\) ``copies'' of the pattern, each shifted by one position.
+            \item Find a column where at least two copies differ.
+            \item Select one of the symbols at that column as the sample and discard copies that don't match.
+            \item After \(O(\log m)\) rounds, one copy remains; its chosen columns form the sample \(S\).
+        \end{enumerate}
+    \end{block}
+
+\end{frame}
+
+\begin{frame}{Deterministic Sampling}
+    \begin{block}{Why it works}
+        \begin{itemize}
+            \item Instead of a full pattern check per alignment (\(O(m)\) classically, \(\tilde O(\sqrt m)\) quantum), only \(O(\log m)\) sampled positions are tested.
+            \item Only the single surviving alignment requires the expensive full check.
+        \end{itemize}
+    \end{block}
+    \begin{block}{Why it matters}
+        \begin{itemize}
+            \item Enables the overall quantum string matching to run in \(\tilde O(\sqrt n + \sqrt m)\) by reducing costly \(\sqrt m\) checks to one per text block.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\subsection{Tight bounds on quantum searching}
+\begin{frame}{BBHT96: Tight bounds on quantum searching}
+    \begin{block}{What it is}
+        \begin{itemize}
+            \item Even when the number of target \(t \ge 1\) items in a database is unknown,
+                  you can still find a marked item in \(\tilde O(\sqrt{N/t})\) oracle calls.
+            \item BBHT96 describes a procedure which, given an oracle flagging at least \(t\) marked
+                  elements among \(n\) candidates, returns one solution in \(O(\sqrt{n/t})\) time
+                  with constant success probability.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{BBHT96: Tight bounds on quantum searching}
+
+    \begin{block}{Why it matters}
+        \begin{itemize}
+            \item It underpins the claimed time bound in our string‑matching algorithm.
+            \item When checking a text block (size \(m/2\)) for any matching alignment, \(t\) is unknown.
+            \item BBHT96’s procedure lets us invoke Grover’s search reliably in this setting.
+            \item Every oracle in the string‑matching pipeline (e.g.\ \(f, h\)) relies on BBHT96’s bound
+                  to guarantee the \(\tilde O(\sqrt n + \sqrt m)\) runtime.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\subsection{Minimum Finding Oracle}
+\begin{frame}{DH96: Minimum Finding Oracle}
+    \begin{block}{What it is}
+        \begin{itemize}
+            \item Given a database of size \(n\) and a comparison oracle
+                  that, for any two indices \(i,j\), indicates which element is smaller.
+            \item Finds the index of the minimum element in \(O(\sqrt{n})\) time.
+            \item Serves as the backbone for all “pick the smallest (or leftmost) index satisfying a condition” steps.
+        \end{itemize}
+    \end{block}
+
+    \begin{block}{Steps}
+        \begin{enumerate}
+            \item Pick a random starting position \(k\).
+            \item Use Grover’s search to find any index \(i\) with \(\text{database}[i] < \text{database}[k]\).
+            \item If such an \(i\) is found, set \(k \leftarrow i\) and repeat.
+            \item Otherwise, \(k\) is the index of the minimum element.
+        \end{enumerate}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}{DH96: Minimum Finding Oracle}
+
+    \begin{block}{Why it matters}
+        \begin{itemize}
+            \item Building the deterministic sampling set:
+                  Repeatedly eliminate half of the \(m/2\) pattern copies by finding
+                  the leftmost and rightmost survivor via DH96 in \(O(\sqrt{m}\log m)\) time.
+            \item After locating the matching text-block with the \(h(i)\) oracle,
+                  invoke DH96 over block indices to pinpoint the earliest occurrence,
+                  preserving the overall \(\tilde{O}(\sqrt{n} + \sqrt{m})\) bound.
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\section{Quantum String Matching}
+\subsection{Concerning Periodicity}
+\begin{frame}{Concerning Periodicity}
+    % discuss periodic vs. aperiodic patterns
+\end{frame}
+
+\subsection{Constant Two-Sided Failure Probability}
+
+\begin{frame}{Concerning Periodicity}
+    % discuss the importance of the constant two-sided failure probability as mentioned in the paper
+\end{frame}
+
+\subsection{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
+\begin{frame}{Concerning Periodicity}
+    % bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
+\end{frame}
+
 
 \section{Conclusion}
 \begin{frame}{Conclusion}
-    \begin{itemize}
-        \item Summary of Key Points
-        \item Future Work
-    \end{itemize}
+    % list of key points
+    % why the paper matters
 \end{frame}
 
 \end{document}
