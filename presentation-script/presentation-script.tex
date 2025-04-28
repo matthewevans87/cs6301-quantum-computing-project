@@ -16,7 +16,7 @@
 \titleformat{\section}{\normalfont\Large\bfseries}{\thesection.}{1em}{}
 
 \title{Presentation Script \\ 
-\Large{Response to Ramesh \& Vinay, (2000)\\ 
+\Large{Response to Ramesh \& Vinay, (2003)\\ 
 \small{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}} }}
 
 \author{%
@@ -34,20 +34,20 @@ Here's the key idea for aperiodic patterns: imagine laying down all \(m/2\) shif
 
 \section*{Steps}
 \begin{enumerate}
-    \item Initialize \begin{itemize}
-              \item Label copies \(1, 2, \dots, m/2\)
-              \item Let the sample set \(S\) be empty
-          \end{itemize}
-    \item Repeat \(O(\log m)\) times \begin{itemize}
-              \item Find a column \(c\) where at least two surviving copies disagree.
-              \item Add \(c\) to \(S\).
-              \item Pick the minority character \(\mathcal{X}\) at \(c\), and discard any copy whose character at \(c \neq \mathcal{X}\).
-              \item This halfs the number of ``survivors'' each round.
-          \end{itemize}
-    \item Result \begin{itemize}
-              \item You end up with exactly one copy \(p^\star\) and a sample set \(S\) of size \(O(\log m)\).
-              \item Any alignment that matches the text at \textit{any} positions in \(S\) must be that copy; you've reduced \(m/2\) possibilities to one candidate.
-          \end{itemize}
+  \item Initialize \begin{itemize}
+          \item Label copies \(1, 2, \dots, m/2\)
+          \item Let the sample set \(S\) be empty
+        \end{itemize}
+  \item Repeat \(O(\log m)\) times \begin{itemize}
+          \item Find a column \(c\) where at least two surviving copies disagree.
+          \item Add \(c\) to \(S\).
+          \item Pick the minority character \(\mathcal{X}\) at \(c\), and discard any copy whose character at \(c \neq \mathcal{X}\).
+          \item This halfs the number of ``survivors'' each round.
+        \end{itemize}
+  \item Result \begin{itemize}
+          \item You end up with exactly one copy \(p^\star\) and a sample set \(S\) of size \(O(\log m)\).
+          \item Any alignment that matches the text at \textit{any} positions in \(S\) must be that copy; you've reduced \(m/2\) possibilities to one candidate.
+        \end{itemize}
 \end{enumerate}
 
 \subsection*{Efficiency}
@@ -62,32 +62,32 @@ Deterministic sampling thus gives a small, carefully chosen set of pattern posit
 \section*{DH96 - Minimum Finding Oracle}
 \section*{Concept \& Intuition}
 \begin{enumerate}
-    \item \textbf{Random Starting Point}
-          Pick an index \(k\) uniformly at random.
-    \item \textbf{Grover Search for Improvement}
-          Use Grover's subroutine to search for any index \(i\) such that
-          \[
-              \text{item}[i] < \text{item}[k].
-          \]
-          \begin{itemize}
-              \item If none is found, \(k\) is the minimum.
-              \item If one is found, set \(k \leftarrow i\) (you've found a strictly smaller item).
-          \end{itemize}
-    \item \textbf{Iterate}
-          Repeat the Grover search/update step a small constant number of times until no better index appears.
-    \item \textbf{Geometric Speed-Up}
-          Each search costs \(O(\sqrt{n/t})\) where \(t\) is the number of strictly smaller elements (initially up to \(n-1\)), and the sequence of improvements converges in \(O(\sqrt{n})\) total time.
+  \item \textbf{Random Starting Point}
+        Pick an index \(k\) uniformly at random.
+  \item \textbf{Grover Search for Improvement}
+        Use Grover's subroutine to search for any index \(i\) such that
+        \[
+          \text{item}[i] < \text{item}[k].
+        \]
+        \begin{itemize}
+          \item If none is found, \(k\) is the minimum.
+          \item If one is found, set \(k \leftarrow i\) (you've found a strictly smaller item).
+        \end{itemize}
+  \item \textbf{Iterate}
+        Repeat the Grover search/update step a small constant number of times until no better index appears.
+  \item \textbf{Geometric Speed-Up}
+        Each search costs \(O(\sqrt{n/t})\) where \(t\) is the number of strictly smaller elements (initially up to \(n-1\)), and the sequence of improvements converges in \(O(\sqrt{n})\) total time.
 \end{enumerate}
 
 \section*{Why It Matters}
 \begin{itemize}
-    \item \textbf{Quantum vs.\ Classical:} Reduces the “find-min” cost from linear to square-root time.
-    \item \textbf{General-Purpose Primitive:} You can wrap any Boolean test (“is this element in our candidate set?”) and efficiently extract the smallest satisfying index.
-    \item \textbf{Key Uses in Ramesh--Vinay:}
-          \begin{itemize}
-              \item Identifying the leftmost text block that might contain a match.
-              \item Finding the leftmost or rightmost surviving pattern copy when building the deterministic sample.
-          \end{itemize}
+  \item \textbf{Quantum vs.\ Classical:} Reduces the “find-min” cost from linear to square-root time.
+  \item \textbf{General-Purpose Primitive:} You can wrap any Boolean test (“is this element in our candidate set?”) and efficiently extract the smallest satisfying index.
+  \item \textbf{Key Uses in Ramesh--Vinay:}
+        \begin{itemize}
+          \item Identifying the leftmost text block that might contain a match.
+          \item Finding the leftmost or rightmost surviving pattern copy when building the deterministic sample.
+        \end{itemize}
 \end{itemize}
 
 \section*{Wrap-up}
