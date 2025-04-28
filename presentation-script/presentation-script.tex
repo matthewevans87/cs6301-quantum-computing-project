@@ -27,6 +27,7 @@
 \maketitle
 
 \section*{Deterministic Sampling}
+% Mention aperiodic strings, which is why the m/2 length is relevant.
 Imagine you have a pattern of length m that you want to match against a block of text of length roughly \(m/2\). Naively there are \(m/2\) possible alignments to check, and even a quantum search over all of them costs \(sqrt(m)\) time each. Deterministic sampling is a clever trick (originally due to Vishkin) that lets us rule out all but one candidate alignment by examining only an \(O(\log m)\)-sized set of ``sample'' of pattern positions.
 
 Here's the key idea for aperiodic patterns: imagine laying down all \(m/2\) shifted copies of your pattern above the text block. Because the pattern is aperiodic, there must be at least one column (pattern index) in which two of these copies differ. If you pick that column and look at the two distinct characters there, then at most one of the copies can match your text at that column. Eliminating the other half of the copies—and repeating this process—quickly isolates a single surviving copy.
