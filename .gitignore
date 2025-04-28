@@ -8,5 +8,4 @@
 !/.vscode/extensions.json
 
 !**/
-!**/*.pdf
 !**/*.tex

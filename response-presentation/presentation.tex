@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{mathtools}
 \usetikzlibrary{shapes,arrows.meta,positioning}
 \usetikzlibrary{quantikz2}
 
@@ -155,44 +156,82 @@
         \item Steps:
               \begin{enumerate}
                   \item Initialize \(n\) qubits into uniform superposition over \(N=2^n\) states.
-                  \item Apply the oracle to flip the phase of marked states.
-                  \item Perform the diffusion (inversion-about-the-mean) operator.
-                  \item Repeat oracle + diffusion \(\bigl\lfloor\frac{\pi}{4}\sqrt{N/t}\bigr\rfloor\) times (\(t\)=\# marked).
-                  \item Measure to obtain a marked element with high probability.
+                  \item Apply the search oracle to flip the phase of marked states (multiply goal state amplitude by -1).
+                  \item Apply diffusion operator which reflects all states amplitude across the mean amplitude.
+                  \item Repeat oracle + diffusion \(\bigl\lfloor\frac{\pi}{4}\sqrt{N}\bigr\rfloor\)
+                  \item Measure to obtain the marked element with high probability.
               \end{enumerate}
-        \item Time Complexity: \(\mathcal{O}\!\bigl(\sqrt{N/t}\bigr)\).
+        \item Time Complexity: \(\mathcal{O}\!\bigl(\sqrt{N}\bigr)\).
         \item Why it works: Oracle phase-flips mark targets; diffusion amplifies their amplitudes.
         \item Significance: Core building block for quantum search algorithms.
     \end{itemize}
 \end{frame}
-
 \subsection{Tight bounds on quantum searching}
 \begin{frame}{BBHT96: Tight bounds on quantum searching}
     \begin{block}{What it is}
         \begin{itemize}
             \item Even when the number of target \(t \ge 1\) items in a database is unknown,
                   you can still find a marked item in \(\tilde O(\sqrt{N/t})\) oracle calls.
-            \item BBHT96 describes a procedure which, given an oracle flagging at least \(t\) marked
-                  elements among \(n\) candidates, returns one solution in \(O(\sqrt{n/t})\) time
-                  with constant success probability.
+
         \end{itemize}
     \end{block}
-\end{frame}
-
-
-\begin{frame}{BBHT96: Tight bounds on quantum searching}
-
     \begin{block}{Why it matters}
         \begin{itemize}
-            \item It underpins the claimed time bound in our string-matching algorithm.
-            \item When checking a text block (size \(m/2\)) for any matching alignment, \(t\) is unknown.
-            \item BBHT96's procedure lets us invoke Grover's search reliably in this setting.
-            \item Every oracle in the string-matching pipeline (e.g.\ \(f, h\)) relies on BBHT96's bound
-                  to guarantee the \(\tilde O(\sqrt n + \sqrt m)\) runtime.
+            \item BBHT96 modifies grovers algorithm slightly to function when the number of possible solutions is unknown like in this string matching problem.
         \end{itemize}
     \end{block}
 \end{frame}
 
+
+\subsection{Probablistic Oracles}
+\begin{frame}{Probablistic Oracles}
+    \begin{block}{What it is}
+        \begin{itemize}
+            \item We will replace search oracles which flip target states with 100 percent probability with probablistic search oracles which flip target states with 75 percent accuracy
+            \item How to preserve accuracy? 
+            \item We will apply the probabilistic search oracles log(n) times to the current superposition 
+            \item Afterwards each state will flip or not flip based on what it did in the majority of the log(n) times the probablistic oracle was applied
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\subsection{Section 3}
+\begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n} )\)}
+    \begin{block}{Outer Grovers algorthm}
+        \begin{itemize}
+            \item n = size of text, m = size of pattern. n - m + 1 = number of comparisons/states
+            \item EX: text = abcdef, pattern = def, n = 6, m = 3.
+            \item abc, bcd, cde, and def
+            \item \ket{00}: index 0 ... index m-1 (abc)
+            \item \ket{01}: index 1 ... index m   (bcd)
+            \item \ket{10}: index 2 ... index m+1 (cde)
+            \item \ket{11}: index 3 ... index m+2 (def)
+            \item Oracle f(i) applies phase kickback if match at position/state i
+            \item EX: 1/sqrt(4) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
+            \item States provide index to search oracle
+            \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers to find string match at desired state
+            \item Goal: When we measure we want a state that maps to a matching substring
+            \item How exactly does the oracle f(i) detect matches at a position/state?
+        \end{itemize}
+    \end{block}
+\end{frame}
+
+\subsection{Section 3}
+\begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n})\) continued}
+    \begin{block}{Inner Grovers algorithm}
+        \begin{itemize}
+            \item How does the search oracle f(i) detect matches? f(i) performs Grovers algorithm
+            \item Goal: Another grovers algorithm that maps to an integer j such that i+j is a mismatch
+            \item After the search oracle f(i) acts on a state it knows where the starting position of the substring in the text, i
+            \item Now the oracle f(i) needs to detect if there exists a text[i+j] thats not equal to pattern[j] where j is an integer from [0,m]
+            \item This can be done with another grovers search with 
+            \item Our states in the superposition $\sum_{j=0}^{m} a$
+            \item Inside f(i) we have search oracle g(i,j) which acts on states i to i+m-1
+            \item g(i,j) applies inverts phase of state when text[i+j] != pattern[j]
+            \item 
+        \end{itemize}
+    \end{block}
+\end{frame}
 
 \subsection{Deterministic Sampling}
 \begin{frame}{Deterministic Sampling}

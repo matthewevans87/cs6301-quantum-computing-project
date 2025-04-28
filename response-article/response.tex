@@ -43,10 +43,10 @@ Grover's algorithm \cite{grover1996fastquantummechanicalalgorithm} addresses the
     \item Initialize a superposition over all \(N\) basis states.
     \item Apply the oracle \(O_f\) to flip the phase of the \(t\) marked states.
     \item Perform the diffusion operator to reflect amplitudes about their average.
-    \item Repeat the oracle and diffusion operations approximately \(\frac{\pi}{4}\sqrt{N/t}\) times.
+    \item Repeat the oracle and diffusion operations approximately \(\frac{\pi}{4}\sqrt{N}\) times.
     \item Measure the register to obtain a marked element with high probability.
 \end{enumerate}
-Running in \(O(\sqrt{N/t})\) time, Grover's algorithm provides the core quantum search subroutine underpinning the \(\widetilde{O}(\sqrt{n}+\sqrt{m})\) string-matching algorithm.
+Running in \(O(\sqrt{N})\) time, Grover's algorithm provides the core quantum search subroutine underpinning the \(\widetilde{O}(\sqrt{n}+\sqrt{m})\) string-matching algorithm.
 
 \subsection{Tight Bounds on Grover's (BBHT96)}
 \cite[Boyer, Brassard, Høyer, and Tapp]{Boyer_1998} show that even when the exact number of target items \(t\) in an unsorted database of size \(N\) is unknown, one can still locate a marked element in \(O(\sqrt(N/t))\) oracle calls with constant success probability. Their procedure adaptively adjusts the number of Grover iterations to achieve the same quadratic speedup without prior knowledge of \(t\). In our string-matching algorithm, this result is crucial: when searching a text block of length \(m/2\) for any matching alignment, we do not know in advance how many alignments will succeed, so we invoke BBHT96's method to retain the overall \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) runtime bound.
