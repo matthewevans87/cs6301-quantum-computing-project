@@ -1,0 +1,66 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{titlesec}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks   = true,
+    linkcolor    = blue,
+    urlcolor     = blue
+}
+
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection.}{1em}{}
+
+\title{Presentation Script \\ 
+\Large{Response to Ramesh \& Vinay, (2003)\\ 
+\small{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}} }}
+
+\author{%
+\normalsize{Matthew Evans, Ariz Siddiqui, Nathan Puskuri}
+}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section*{Deterministic Sampling}
+Imagine you have a pattern of length m that you want to match against a block of text of length roughly \(m/2\). Naively there are \(m/2\) possible alignments to check, and even a quantum search over all of them costs \(sqrt(m)\) time each. Deterministic sampling is a clever trick—originally due to Vishkin—that lets us rule out all but one candidate alignment by examining only an \(O(\log m)\)-sized ``sample'' of pattern positions.
+
+Here's the key idea for aperiodic patterns: imagine laying down all \(m/2\) shifted copies of your pattern above the text block. Because the pattern is aperiodic, there must be at least one column (pattern index) in which two of these copies differ. If you pick that column and look at the two distinct characters there, then at most one of the copies can match your text at that column. Eliminating the other half of the copies—and repeating this process—quickly isolates a single surviving copy.
+
+\section*{Steps}
+\begin{enumerate}
+    \item Initialize \begin{itemize}
+              \item Label copies \(1, 2, \dots, m/2\)
+              \item Let the sample set \(S\) be empty
+          \end{itemize}
+    \item Repeat \(O(\log m)\) times \begin{itemize}
+              \item Find a column \(c\) where at least two surviving copies disagree.
+              \item Add \(c\) to \(S\).
+              \item Pick the minority character \(\mathcal{X}\) at \(c\), and discard any copy whose character at \(c \neq \mathcal{X}\).
+              \item This halfs the number of ``survivors'' each round.
+          \end{itemize}
+    \item Result \begin{itemize}
+              \item You end up with exactly one copy \(p^\star\) and a sample set \(S\) of size \(O(\log m)\).
+              \item Any alignment that matches the text at \textit{} positions in \(S\) must be that copy; you've reduced \(m/2\) possibilities to one candidate.
+          \end{itemize}
+\end{enumerate}
+
+\subsection*{Efficiency}
+Classical sampling takes O(m) time to scan all columns each round; quantumly we can replace those scans with Grover-search and quantum minimum-finding to achieve an overall preprocessing time of \(\widetilde{O}()\sqrt{m} \log^2 m\).
+
+\subsection*{Integration}
+In the full quantum string-matching algorithm, you run this sampling once on the pattern, reuse the same \(S\) for every text block, and only need one expensive \(\sqrt{m}\)-time check per block—yielding a sublinear quantum speed-up.
+
+\subsection*{Conclusion}
+Deterministic sampling thus gives a small, carefully chosen set of pattern positions that rules out almost all bad alignments. It's the linchpin that turns a naive \(sqrt{nm}\) quantum approach into an \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) algorithm.
+
+Minimum Finding Oracle
+
+I can also walk through a very basic sketch of the algorithm if you guys want.
+
+
+
+\end{document}
