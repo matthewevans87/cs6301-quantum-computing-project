@@ -26,6 +26,34 @@
 \begin{document}
 \maketitle
 
+\textbf{Matt:}
+\section*{Introduction}
+\begin{itemize}
+  \item Matt
+        \begin{itemize}
+          \item Introduce team
+          \item Intro Slide
+          \item Conceptual Dependencies Slide
+        \end{itemize}
+  \item Nathan \begin{itemize}
+          \item Grover's Algorithm
+          \item BBHT96
+          \item Probablistic Oracles
+          \item String Matching in \(O(\sqrt{n} \sqrt{n})\)
+        \end{itemize}
+  \item Matt \begin{itemize}
+          \item Deterministic Sampling
+          \item DH96: Minimum Finding Oracle
+          \item The Algorithm (steps)
+        \end{itemize}
+  \item Ariz \begin{itemize}
+          \item Periodicity
+          \item Constant Two-sided failure probability
+          \item Achieving \(\tilde{O}(\sqrt{n} + \sqrt{m})\)
+          \item Conclusion
+        \end{itemize}
+\end{itemize}
+
 \section*{Deterministic Sampling}
 % Mention aperiodic strings, which is why the m/2 length is relevant.
 Imagine you have a pattern of length m that you want to match against a block of text of length roughly \(m/2\). Naively there are \(m/2\) possible alignments to check, and even a quantum search over all of them costs \(sqrt(m)\) time each. Deterministic sampling is a clever trick (originally due to Vishkin) that lets us rule out all but one candidate alignment by examining only an \(O(\log m)\)-sized set of ``sample'' of pattern positions.
