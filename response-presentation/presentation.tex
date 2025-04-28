@@ -261,7 +261,7 @@
         \node[draw, rounded corners, label=above right:{\scriptsize\textcolor{blue}{ \(O(\sqrt{n} \log m)\)}}]
         (groverh) [below of=GetHitOracle] {\(i^\star = Grover(h, D_B)\)};
 
-        \node[draw, rounded corners] (GetCandidateOracle) [below of=groverh] {\(h(i) = GetCandidateOracle(i^\star)\)};
+        \node[draw, rounded corners] (GetCandidateOracle) [below of=groverh] {\(k(j) = GetCandidateOracle(i^\star)\)};
 
         \node[draw, rounded corners, label=above right:{\scriptsize\textcolor{blue}{\(O(\sqrt{m} \log m)\)}}]
         (groverk) [below of=GetCandidateOracle] {\(j^\star = Grover(k, D_J)\)};
@@ -308,44 +308,45 @@
 \end{frame}
 
 
-\begin{frame}{The Algorithm (Part 1)}
-  \begin{enumerate}
-    \item \textbf{Deterministic-Sampling Preprocessing.}
-          \begin{itemize}
-            \item Run Vishkin's deterministic-sampling on pattern \(p\) of length \(m\) to obtain an \(O(\log m)\)-sized sample set \(S\).
-            \item Cost: \(\widetilde{O}(\sqrt{m})\).
-          \end{itemize}
-    \item \textbf{Partition the text.}
-          \begin{itemize}
-            \item Divide the text \(t\) into
-                  \[
-                    B \;=\; \Bigl\lceil \frac{2(n - m + 1)}{m} \Bigr\rceil
-                  \]
-                  blocks, each of size \(\approx m/2\).
-          \end{itemize}
-    \item \textbf{Quantum search for a “hit” block.}
-          \begin{itemize}
-            \item Define oracle \(h(i)\): tests if block \(i\) has at least one alignment matching on all positions in \(S\) in \(\widetilde O(\sqrt{m}\,\log m)\) time.
-            \item Use Grover search over \(i=1,\dots,B\) with oracle \(h\); time \(\widetilde{O}(\sqrt{n})\). If none found, conclude “no occurrence.”
-          \end{itemize}
-  \end{enumerate}
-\end{frame}
+% Commenting this out: Just use the diagram.
+% \begin{frame}{The Algorithm (Part 1)}
+%   \begin{enumerate}
+%     \item \textbf{Deterministic-Sampling Preprocessing.}
+%           \begin{itemize}
+%             \item Run Vishkin's deterministic-sampling on pattern \(p\) of length \(m\) to obtain an \(O(\log m)\)-sized sample set \(S\).
+%             \item Cost: \(\widetilde{O}(\sqrt{m})\).
+%           \end{itemize}
+%     \item \textbf{Partition the text.}
+%           \begin{itemize}
+%             \item Divide the text \(t\) into
+%                   \[
+%                     B \;=\; \Bigl\lceil \frac{2(n - m + 1)}{m} \Bigr\rceil
+%                   \]
+%                   blocks, each of size \(\approx m/2\).
+%           \end{itemize}
+%     \item \textbf{Quantum search for a “hit” block.}
+%           \begin{itemize}
+%             \item Define oracle \(h(i)\): tests if block \(i\) has at least one alignment matching on all positions in \(S\) in \(\widetilde O(\sqrt{m}\,\log m)\) time.
+%             \item Use Grover search over \(i=1,\dots,B\) with oracle \(h\); time \(\widetilde{O}(\sqrt{n})\). If none found, conclude “no occurrence.”
+%           \end{itemize}
+%   \end{enumerate}
+% \end{frame}
 
-\begin{frame}{The Algorithm (Part 2)}
-  \begin{enumerate}
-    \setcounter{enumi}{3}
-    \item \textbf{Locate surviving alignment in block.}
-          \begin{itemize}
-            \item Define oracle \(k(i^*,j)\): checks alignment at shift \(j\) in block \(i^*\) on sample \(S\) in \(O(\log m)\) time.
-            \item Use Grover search over \(j=0,\dots,\lfloor m/2\rfloor\) with oracle \(k\); time \(\widetilde O(\sqrt{m}\,\log m)\). If none survives, conclude “no occurrence.”
-          \end{itemize}
-    \item \textbf{Full quantum verification.}
-          \begin{itemize}
-            \item Run Grover search over \(\ell=1,\dots,m\) with oracle “\(t[i^*+j^*+\ell]\neq p[\ell]\)” to find any mismatch; time \(\widetilde O(\sqrt{m})\).
-            \item If no mismatch is found, report occurrence at \(i^*+j^*\); otherwise, conclude “no occurrence.”
-          \end{itemize}
-  \end{enumerate}
-\end{frame}
+% \begin{frame}{The Algorithm (Part 2)}
+%   \begin{enumerate}
+%     \setcounter{enumi}{3}
+%     \item \textbf{Locate surviving alignment in block.}
+%           \begin{itemize}
+%             \item Define oracle \(k(i^*,j)\): checks alignment at shift \(j\) in block \(i^*\) on sample \(S\) in \(O(\log m)\) time.
+%             \item Use Grover search over \(j=0,\dots,\lfloor m/2\rfloor\) with oracle \(k\); time \(\widetilde O(\sqrt{m}\,\log m)\). If none survives, conclude “no occurrence.”
+%           \end{itemize}
+%     \item \textbf{Full quantum verification.}
+%           \begin{itemize}
+%             \item Run Grover search over \(\ell=1,\dots,m\) with oracle “\(t[i^*+j^*+\ell]\neq p[\ell]\)” to find any mismatch; time \(\widetilde O(\sqrt{m})\).
+%             \item If no mismatch is found, report occurrence at \(i^*+j^*\); otherwise, conclude “no occurrence.”
+%           \end{itemize}
+%   \end{enumerate}
+% \end{frame}
 
 
 \subsection{Concerning Periodicity}
