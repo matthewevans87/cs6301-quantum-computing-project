@@ -10,7 +10,7 @@
 \usetikzlibrary{quantikz2}
 
 \title{\Large{Response to Ramesh \& Vinay, (2003)} \\
-\small{\texorpdfstring{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
+\small{\texorpdfstring{\textit{String Matching in \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
 }
 \author{Matthew Evans, Ariz Siddiqui, Nathan Puskuri}
 \date{\today}
@@ -26,7 +26,7 @@
 \end{frame}
 
 \section{Introduction}
-\begin{frame}{\texorpdfstring{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
+\begin{frame}{\texorpdfstring{\textit{String Matching in \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
   \normalsize
   H.\ Ramesh \& V.\ Vinay (IISc Bangalore, 2003)\\
   \vfill
@@ -83,6 +83,166 @@
     \label{fig:quantum-string-matching}
   \end{figure}
 \end{frame}
+
+\section{Preliminaries}
+
+\subsection{Grover's Algorithm}
+\begin{frame}{Grover's Algorithm}
+  \begin{itemize}
+    \item Problem: Given a database of \(N\) elements and oracle \(f(x)=1\) for marked items, find an \(x\) with \(f(x)=1\).
+    \item Steps:
+          \begin{enumerate}
+            \item Initialize \(n\) qubits into uniform superposition over \(N=2^n\) states.
+            \item Apply the search oracle to flip the phase of marked states (multiply goal state amplitude by -1).
+            \item Apply diffusion operator which reflects all states amplitude across the mean amplitude.
+            \item Repeat oracle + diffusion \(\bigl\lfloor\frac{\pi}{4}\sqrt{N}\bigr\rfloor\)
+            \item Measure to obtain the marked element with high probability.
+          \end{enumerate}
+    \item Time Complexity: \(\mathcal{O}\!\bigl(\sqrt{N}\bigr)\).
+    \item Why it works: Oracle phase-flips mark targets; diffusion amplifies their amplitudes.
+    \item Significance: Core building block for quantum search algorithms.
+  \end{itemize}
+\end{frame}
+\subsection{Tight bounds on quantum searching}
+\begin{frame}{BBHT96: Tight bounds on quantum searching}
+  \begin{block}{What it is}
+    \begin{itemize}
+      \item Even when the number of target \(t \ge 1\) items in a database is unknown,
+            you can still find a marked item in \(\widetilde O(\sqrt{N/t})\) oracle calls.
+
+    \end{itemize}
+  \end{block}
+  \begin{block}{Why it matters}
+    \begin{itemize}
+      \item BBHT96 modifies grovers algorithm slightly to function when the number of possible solutions is unknown like in this string matching problem.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\subsection{Probablistic Oracles}
+\begin{frame}{Probablistic Oracles}
+  \begin{block}{What it is}
+    \begin{itemize}
+      \item We will replace search oracles which flip target states with 100 percent probability with probablistic search oracles which flip target states with 75 percent accuracy
+      \item How to preserve accuracy?
+      \item We will apply the probabilistic search oracles log(n) times to the current superposition
+      \item Afterwards each state will flip or not flip based on what it did in the majority of the log(n) times the probablistic oracle was applied
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\subsection{Section 3}
+\begin{frame}{String Match in \(\widetilde{O}(\sqrt{m}\ \sqrt{n} )\)}
+  \begin{block}{Outer Grovers algorthm}
+    \begin{itemize}
+      \item n = size of text, m = size of pattern. n - m + 1 = number of comparisons/states
+      \item EX: text = abcdef, pattern = def, n = 6, m = 3.
+      \item abc, bcd, cde, and def
+      \item \ket{00}: index 0 ... index m-1 (abc)
+      \item \ket{01}: index 1 ... index m   (bcd)
+      \item \ket{10}: index 2 ... index m+1 (cde)
+      \item \ket{11}: index 3 ... index m+2 (def)
+      \item Oracle f(i) applies phase kickback if match at position/state i
+      \item EX: 1/sqrt(4) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
+      \item States provide index to search oracle
+      \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers to find string match at desired state
+      \item Goal: When we measure we want a state that maps to a matching substring
+      \item How exactly does the oracle f(i) detect matches at a position/state?
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\subsection{Section 3}
+\begin{frame}{String Match in \(\widetilde{O}(\sqrt{m}\ \sqrt{n})\) continued}
+  \begin{block}{Inner Grovers algorithm}
+    \begin{itemize}
+      \item How does the search oracle f(i) detect matches? f(i) performs Grovers algorithm
+      \item Goal: Another grovers algorithm that maps to an integer j such that i+j is a mismatch
+      \item After the search oracle f(i) acts on a state it knows where the starting position of the substring in the text, i
+      \item Now the oracle f(i) needs to detect if there exists a text[i+j] thats not equal to pattern[j] where j is an integer from [0,m]
+      \item This can be done with another grovers search with
+      \item Our states in the superposition $\sum_{j=0}^{m} a$
+      \item Inside f(i) we have search oracle g(i,j) which acts on states i to i+m-1
+      \item g(i,j) applies inverts phase of state when text[i+j] != pattern[j]
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\subsection{Deterministic Sampling}
+\begin{frame}{Deterministic Sampling}
+  \begin{block}{What it is}
+    \begin{itemize}
+      \item Given an aperiodic pattern \(p\) of length \(m\), and a text block of length \(m/2\), there are \(m/2\) possible alignments.
+      \item DS picks \(O(\log m)\) indices in the pattern so that at most one alignment can match all sampled positions.
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Steps}
+    \begin{enumerate}
+      \item Form \(m/2\) ``copies'' of the pattern, each shifted by one position.
+      \item Find a column where at least two copies differ.
+      \item Select one of the symbols at that column as the sample and discard copies that don't match.
+      \item After \(O(\log m)\) rounds, one copy remains; its chosen columns form the sample \(S\).
+    \end{enumerate}
+  \end{block}
+
+\end{frame}
+
+\begin{frame}{Deterministic Sampling}
+  \begin{block}{Why it works}
+    \begin{itemize}
+      \item Instead of a full pattern check per alignment (\(O(m)\) classically, \(\widetilde O(\sqrt m)\) quantum), only \(O(\log m)\) sampled positions are tested.
+      \item Only the single surviving alignment requires the expensive full check.
+    \end{itemize}
+  \end{block}
+  \begin{block}{Why it matters}
+    \begin{itemize}
+      \item Enables the overall quantum string matching to run in \(\widetilde O(\sqrt n + \sqrt m)\) by reducing costly \(\sqrt m\) checks to one per text block.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+\subsection{Minimum Finding Oracle}
+\begin{frame}{DH96: Minimum Finding Oracle}
+  \begin{block}{What it is}
+    \begin{itemize}
+      \item Given a database of size \(n\) and a comparison oracle
+            that, for any two indices \(i,j\), indicates which element is smaller.
+      \item Finds the index of the minimum element in \(O(\sqrt{n})\) time.
+      \item Serves as the backbone for all “pick the smallest (or leftmost) index satisfying a condition” steps.
+    \end{itemize}
+  \end{block}
+
+  \begin{block}{Steps}
+    \begin{enumerate}
+      \item Pick a random starting position \(k\).
+      \item Use Grover's search to find any index \(i\) with \(\text{database}[i] < \text{database}[k]\).
+      \item If such an \(i\) is found, set \(k \leftarrow i\) and repeat.
+      \item Otherwise, \(k\) is the index of the minimum element.
+    \end{enumerate}
+  \end{block}
+\end{frame}
+
+\begin{frame}{DH96: Minimum Finding Oracle}
+
+  \begin{block}{Why it matters}
+    \begin{itemize}
+      \item Building the deterministic sampling set:
+            Repeatedly eliminate half of the \(m/2\) pattern copies by finding
+            the leftmost and rightmost survivor via DH96 in \(O(\sqrt{m}\log m)\) time.
+      \item After locating the matching text-block with the \(h(i)\) oracle,
+            invoke DH96 over block indices to pinpoint the earliest occurrence,
+            preserving the overall \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) bound.
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\section{Quantum String Matching}
+
+\subsection{The Algorithm}
+
 
 \begin{frame}{The Algorithm}
   \begin{figure}
@@ -147,165 +307,6 @@
   \end{figure}
 \end{frame}
 
-\section{Preliminaries}
-
-\subsection{Grover's Algorithm}
-\begin{frame}{Grover's Algorithm}
-  \begin{itemize}
-    \item Problem: Given a database of \(N\) elements and oracle \(f(x)=1\) for marked items, find an \(x\) with \(f(x)=1\).
-    \item Steps:
-          \begin{enumerate}
-            \item Initialize \(n\) qubits into uniform superposition over \(N=2^n\) states.
-            \item Apply the search oracle to flip the phase of marked states (multiply goal state amplitude by -1).
-            \item Apply diffusion operator which reflects all states amplitude across the mean amplitude.
-            \item Repeat oracle + diffusion \(\bigl\lfloor\frac{\pi}{4}\sqrt{N}\bigr\rfloor\)
-            \item Measure to obtain the marked element with high probability.
-          \end{enumerate}
-    \item Time Complexity: \(\mathcal{O}\!\bigl(\sqrt{N}\bigr)\).
-    \item Why it works: Oracle phase-flips mark targets; diffusion amplifies their amplitudes.
-    \item Significance: Core building block for quantum search algorithms.
-  \end{itemize}
-\end{frame}
-\subsection{Tight bounds on quantum searching}
-\begin{frame}{BBHT96: Tight bounds on quantum searching}
-  \begin{block}{What it is}
-    \begin{itemize}
-      \item Even when the number of target \(t \ge 1\) items in a database is unknown,
-            you can still find a marked item in \(\tilde O(\sqrt{N/t})\) oracle calls.
-
-    \end{itemize}
-  \end{block}
-  \begin{block}{Why it matters}
-    \begin{itemize}
-      \item BBHT96 modifies grovers algorithm slightly to function when the number of possible solutions is unknown like in this string matching problem.
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-
-\subsection{Probablistic Oracles}
-\begin{frame}{Probablistic Oracles}
-  \begin{block}{What it is}
-    \begin{itemize}
-      \item We will replace search oracles which flip target states with 100 percent probability with probablistic search oracles which flip target states with 75 percent accuracy
-      \item How to preserve accuracy?
-      \item We will apply the probabilistic search oracles log(n) times to the current superposition
-      \item Afterwards each state will flip or not flip based on what it did in the majority of the log(n) times the probablistic oracle was applied
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\subsection{Section 3}
-\begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n} )\)}
-  \begin{block}{Outer Grovers algorthm}
-    \begin{itemize}
-      \item n = size of text, m = size of pattern. n - m + 1 = number of comparisons/states
-      \item EX: text = abcdef, pattern = def, n = 6, m = 3.
-      \item abc, bcd, cde, and def
-      \item \ket{00}: index 0 ... index m-1 (abc)
-      \item \ket{01}: index 1 ... index m   (bcd)
-      \item \ket{10}: index 2 ... index m+1 (cde)
-      \item \ket{11}: index 3 ... index m+2 (def)
-      \item Oracle f(i) applies phase kickback if match at position/state i
-      \item EX: 1/sqrt(4) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
-      \item States provide index to search oracle
-      \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers to find string match at desired state
-      \item Goal: When we measure we want a state that maps to a matching substring
-      \item How exactly does the oracle f(i) detect matches at a position/state?
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\subsection{Section 3}
-\begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n})\) continued}
-  \begin{block}{Inner Grovers algorithm}
-    \begin{itemize}
-      \item How does the search oracle f(i) detect matches? f(i) performs Grovers algorithm
-      \item Goal: Another grovers algorithm that maps to an integer j such that i+j is a mismatch
-      \item After the search oracle f(i) acts on a state it knows where the starting position of the substring in the text, i
-      \item Now the oracle f(i) needs to detect if there exists a text[i+j] thats not equal to pattern[j] where j is an integer from [0,m]
-      \item This can be done with another grovers search with
-      \item Our states in the superposition $\sum_{j=0}^{m} a$
-      \item Inside f(i) we have search oracle g(i,j) which acts on states i to i+m-1
-      \item g(i,j) applies inverts phase of state when text[i+j] != pattern[j]
-      \item
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\subsection{Deterministic Sampling}
-\begin{frame}{Deterministic Sampling}
-  \begin{block}{What it is}
-    \begin{itemize}
-      \item Given an aperiodic pattern \(p\) of length \(m\), and a text block of length \(m/2\), there are \(m/2\) possible alignments.
-      \item DS picks \(O(\log m)\) indices in the pattern so that at most one alignment can match all sampled positions.
-    \end{itemize}
-  \end{block}
-
-  \begin{block}{Steps}
-    \begin{enumerate}
-      \item Form \(m/2\) ``copies'' of the pattern, each shifted by one position.
-      \item Find a column where at least two copies differ.
-      \item Select one of the symbols at that column as the sample and discard copies that don't match.
-      \item After \(O(\log m)\) rounds, one copy remains; its chosen columns form the sample \(S\).
-    \end{enumerate}
-  \end{block}
-
-\end{frame}
-
-\begin{frame}{Deterministic Sampling}
-  \begin{block}{Why it works}
-    \begin{itemize}
-      \item Instead of a full pattern check per alignment (\(O(m)\) classically, \(\tilde O(\sqrt m)\) quantum), only \(O(\log m)\) sampled positions are tested.
-      \item Only the single surviving alignment requires the expensive full check.
-    \end{itemize}
-  \end{block}
-  \begin{block}{Why it matters}
-    \begin{itemize}
-      \item Enables the overall quantum string matching to run in \(\tilde O(\sqrt n + \sqrt m)\) by reducing costly \(\sqrt m\) checks to one per text block.
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-
-\subsection{Minimum Finding Oracle}
-\begin{frame}{DH96: Minimum Finding Oracle}
-  \begin{block}{What it is}
-    \begin{itemize}
-      \item Given a database of size \(n\) and a comparison oracle
-            that, for any two indices \(i,j\), indicates which element is smaller.
-      \item Finds the index of the minimum element in \(O(\sqrt{n})\) time.
-      \item Serves as the backbone for all “pick the smallest (or leftmost) index satisfying a condition” steps.
-    \end{itemize}
-  \end{block}
-
-  \begin{block}{Steps}
-    \begin{enumerate}
-      \item Pick a random starting position \(k\).
-      \item Use Grover's search to find any index \(i\) with \(\text{database}[i] < \text{database}[k]\).
-      \item If such an \(i\) is found, set \(k \leftarrow i\) and repeat.
-      \item Otherwise, \(k\) is the index of the minimum element.
-    \end{enumerate}
-  \end{block}
-\end{frame}
-
-\begin{frame}{DH96: Minimum Finding Oracle}
-
-  \begin{block}{Why it matters}
-    \begin{itemize}
-      \item Building the deterministic sampling set:
-            Repeatedly eliminate half of the \(m/2\) pattern copies by finding
-            the leftmost and rightmost survivor via DH96 in \(O(\sqrt{m}\log m)\) time.
-      \item After locating the matching text-block with the \(h(i)\) oracle,
-            invoke DH96 over block indices to pinpoint the earliest occurrence,
-            preserving the overall \(\tilde{O}(\sqrt{n} + \sqrt{m})\) bound.
-    \end{itemize}
-  \end{block}
-\end{frame}
-
-\section{Quantum String Matching}
-
-\subsection{The Algorithm}
 \begin{frame}{The Algorithm (Part 1)}
   \begin{enumerate}
     \item \textbf{Deterministic-Sampling Preprocessing.}
@@ -345,6 +346,7 @@
   \end{enumerate}
 \end{frame}
 
+
 \subsection{Concerning Periodicity}
 \begin{frame}{Concerning Periodicity}
   % discuss periodic vs. aperiodic patterns
@@ -368,27 +370,27 @@
           \end{itemize}
 
     \item However, these probabilites are constant, allowing them to be driven down to zero by simple repetition.
-    \item The $\tilde{O} (\sqrt{n} + \sqrt{m})$ complexity allows the algorithm to be run repeatedly without significant computational costs.
+    \item The $\widetilde{O} (\sqrt{n} + \sqrt{m})$ complexity allows the algorithm to be run repeatedly without significant computational costs.
   \end{itemize}
 \end{frame}
 
-\subsection{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
-\begin{frame}{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
+\subsection{Achieving \texorpdfstring{$\widetilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
+\begin{frame}{Achieving \texorpdfstring{$\widetilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
   % bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
   So, the final structure of the algorithm is:
   \begin{itemize}
-    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $2m$ length each. Then use Grover's algorithm to find blocks containing a match. Matches are checked using Deterministic Sampling in $\tilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
+    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $2m$ length each. Then use Grover's algorithm to find blocks containing a match. Matches are checked using Deterministic Sampling in $\widetilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
           \[
-            \tilde{O} ( \sqrt{n \over m} ) \times \tilde{O}(\sqrt{m}) = \tilde{O}(\sqrt{n})
+            \widetilde{O} \left(\sqrt{n \over m}\right) \times \widetilde{O}(\sqrt{m}) = \widetilde{O}(\sqrt{n})
           \]
     \item \textbf{Fine Matching: }Once a block is found, use Quantum Minimum Finding over $O(m)$ candidate positions within the block. Thus, the time complexity for this step becomes:
           \[
-            \tilde{O}(\sqrt{m})
+            \widetilde{O}(\sqrt{m})
           \]
   \end{itemize}
   Thus, the overall time complexity becomes:
   \[
-    \tilde{O}(\sqrt{n}+\sqrt{m})
+    \widetilde{O}(\sqrt{n}+\sqrt{m})
   \]
 
 \end{frame}
@@ -396,8 +398,9 @@
 
 \section{Conclusion}
 \begin{frame}{Conclusion}
-  % list of key points
-  % why the paper matters
+  \section*{Conclusion}
+  In summary, by combining Grover's amplitude-amplification for block-level search, Dürr-Høyer's \(O(\sqrt{n})\) minimum-finding to locate the earliest candidate, and Vishkin's \(O(\log m)\) deterministic sampling to isolate a single alignment, Ramesh and Vinay transform the classical \(\Theta(n + m)\) string-matching problem into a quantum algorithm running in \(\widetilde O(\sqrt{n} + \sqrt{m})\) time with constant two-sided error.
+
 \end{frame}
 
 \end{document}
