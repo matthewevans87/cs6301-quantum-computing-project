@@ -10,7 +10,7 @@
 \usetikzlibrary{quantikz2}
 
 \title{\Large{Response to Ramesh \& Vinay, (2003)} \\
-\small{\texorpdfstring{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
+\small{\texorpdfstring{\textit{String Matching in \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
 }
 \author{Matthew Evans, Ariz Siddiqui, Nathan Puskuri}
 \date{\today}
@@ -26,7 +26,7 @@
 \end{frame}
 
 \section{Introduction}
-\begin{frame}{\texorpdfstring{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
+\begin{frame}{\texorpdfstring{\textit{String Matching in \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
   \normalsize
   H.\ Ramesh \& V.\ Vinay (IISc Bangalore, 2003)\\
   \vfill
@@ -209,7 +209,7 @@
       \item Oracle f(i) applies phase kickback if match at position/state i
       \item EX: 1/sqrt(4) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
       \item States provide position to search oracle
-      \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers 
+      \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers
       \item How exactly does the oracle f(i) detect matches?
     \end{itemize}
   \end{block}
@@ -222,7 +222,7 @@
       \item f(i) detects mismatches between its substring and the pattern
       \item Grovers inside f(i) to find mismatch
 
-      
+
     \end{itemize}
   \end{block}
   \begin{block}{Inner Grovers algorithm}
@@ -301,7 +301,7 @@
             the leftmost and rightmost survivor via DH96 in \(O(\sqrt{m}\log m)\) time.
       \item After locating the matching text-block with the \(h(i)\) oracle,
             invoke DH96 over block indices to pinpoint the earliest occurrence,
-            preserving the overall \(\tilde{O}(\sqrt{n} + \sqrt{m})\) bound.
+            preserving the overall \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) bound.
     \end{itemize}
   \end{block}
 \end{frame}
@@ -371,39 +371,39 @@
           \end{itemize}
 
     \item However, these probabilites are constant, allowing them to be driven down to zero by simple repetition.
-    \item The $\tilde{O} (\sqrt{n} + \sqrt{m})$ complexity allows the algorithm to be run repeatedly without significant computational costs.
+    \item The $\widetilde{O} (\sqrt{n} + \sqrt{m})$ complexity allows the algorithm to be run repeatedly without significant computational costs.
   \end{itemize}
 \end{frame}
 
-\subsection{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
-\begin{frame}{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
+\subsection{Achieving \texorpdfstring{$\widetilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
+\begin{frame}{Achieving \texorpdfstring{$\widetilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
   % bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
-  So, the final structure of the algorithm is:
+  The final structure of the algorithm becomes:
   \begin{itemize}
-    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $\frac{m}{2}$ length each using Deterministic Sampling. Then use Grover's algorithm to find blocks containing a match. This takes $\tilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
+    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $\frac{m}{2}$ length. Then use Grover's algorithm with a search oracle which compares sample indices from Deterministic Sampling to find blocks containing a match. This takes $\widetilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
           \[
-            \tilde{O} ( \sqrt{n \over m} ) \times \tilde{O}(\sqrt{m}) = \tilde{O}(\sqrt{n})
+            \widetilde{O} \left(\sqrt{n \over m}\right) \times \widetilde{O}(\sqrt{m}) = \widetilde{O}(\sqrt{n})
           \]
     \item \textbf{Fine Matching: }Once a block is found, use Grover's Search over $O(m)$ candidate positions within the block. Thus, the time complexity for this step becomes:
           \[
-            \tilde{O}(\sqrt{m})
+            \widetilde{O}(\sqrt{m})
           \]
   \end{itemize}
   Thus, the overall time complexity becomes:
   \[
-    \tilde{O}(\sqrt{n}+\sqrt{m})
+    \widetilde{O}(\sqrt{n}+\sqrt{m})
   \]
-Where $\tilde{O}$ magically ignores log-terms in the expression.
+  Where $\widetilde{O}$ omits polylog-terms in the expression.
 \end{frame}
 
 
 \section{Conclusion}
 \begin{frame}{Conclusion}
   \begin{itemize}
-	\item Just like the probability of failure, the probability of success is a constant, and is greater than $\frac12$.
-	\item With a highly modular design, the algorithm's modules can be swapped out to accomplish different tasks with similar if not the same time complexity.
-	\item A problem left to the reader or to the future is dealing with don't cares in the same time bounds. The main issue is the implementation of quantum convolution using FFT in $\tilde{O}(\sqrt{n})$ time.
-	\item The main issue with the implementation of this algorithm is the assumed fast oracle, that is not present in the current tech stack of quantum computers.
+    \item Just like the probability of failure, the probability of success is a constant, and is greater than $\frac12$.
+    \item With a highly modular design, the algorithm's modules can be swapped out to accomplish different tasks with similar if not the same time complexity.
+    \item A problem left to the reader or to the future is dealing with don't cares (i.e., ``wild-cards'') in the same time bounds. The main issue is the implementation of quantum convolution using FFT in $\widetilde{O}(\sqrt{n})$ time.
+    \item The main issue with the implementation of this algorithm is the assumed fast oracle, that is not present in the current tech stack of quantum computers.
   \end{itemize}
 \end{frame}
 
