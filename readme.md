@@ -1,6 +1,6 @@
 # UT Dallas - CS 6301 (Quantum Computing) Semester Project
 
-This repository contains an article and presentation responding to _Ramesh & Vinay (2003)_.
+This repository contains an article and presentation responding to _Ramesh & Vinay (2000)_.
 
 ## Tips
 
