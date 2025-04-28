@@ -27,7 +27,7 @@
 \section{Introduction}
 \begin{frame}{\texorpdfstring{\textit{String Matching in \(\tilde{O}(\sqrt{n} + \sqrt{m})\) Quantum Time}}{String Matching in O(sqrt(n) + sqrt(m)) Quantum Time}}
     \normalsize
-    H.\ Ramesh \& V.\ Vinay (IISc Bangalore, 2000)\\
+    H.\ Ramesh \& V.\ Vinay (IISc Bangalore, 2003)\\
     \vfill
     \begin{block}{Problem Statement}
         Given a text $t$ of length $n$ and a pattern $p$ of length $m$, decide whether $p$ occurs in $t$.
@@ -309,16 +309,49 @@
 \subsection{Concerning Periodicity}
 \begin{frame}{Concerning Periodicity}
     % discuss periodic vs. aperiodic patterns
+    \begin{itemize}
+        \item The difference between periodic and aperiodic strings boils down to whether the string consists of a repeating sub-string or not. 
+		\item Periodicity leads to issues with the deterministic sampling as it means that the unique identification of a match is not guaranteed.
+        \item While the algorithm mentioned above processes aperiodic strings, by adding a simple step of pre-processing, the algorithm can also handle periodic string with the same time complexity.
+        
+        \item To handle periodic strings, we first find the period $p$ of the repeating pattern. Then, instead of checking every single position in the string for matches, the search space simplifies down to shifts that are multiples of $p$, i.e. checks only occur at every $p$-th position.
+    \end{itemize}
 \end{frame}
 
 \subsection{Constant Two-Sided Failure Probability}
 \begin{frame}{Constant Two-Sided Failure Probability}
     % discuss the importance of the constant two-sided failure probability as mentioned in the paper
+	\begin{itemize}
+		\item The algorithm, based on the probabilistic Gover's and Quantum Minimum Finding algorithms, has a non-zero probability of:
+		\begin{itemize}
+			\item failing to find a correct match (false negative), and
+			\item finding a match that is incorrect (false positive)
+		\end{itemize}
+
+		\item However, these probabilites are constant, allowing them to be driven down to zero by simple repetition.
+		\item The $\tilde{O} (\sqrt{n} + \sqrt{m})$ complexity allows the algorithm to be run repeatedly without significant computational costs.
+	\end{itemize}
 \end{frame}
 
 \subsection{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
 \begin{frame}{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
     % bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
+	So, the final structure of the algorithm is:
+	\begin{itemize}
+		\item \textbf{Block Search: }Divide a given string into overlapping blocks of $2m$ length each. Then use Grover's algorithm to find blocks containing a match. Matches are checked using Deterministic Sampling in $\tilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
+		\[
+			\tilde{O} ( \sqrt{n \over m} ) \times \tilde{O}(\sqrt{m}) = \tilde{O}(\sqrt{n})
+		\]
+		\item \textbf{Fine Matching: }Once a block is found, use Quantum Minimum Finding over $O(m)$ candidate positions within the block. Thus, the time complexity for this step becomes:
+		\[
+		\tilde{O}(\sqrt{m})
+		\]
+	\end{itemize}
+	Thus, the overall time complexity becomes:
+	\[
+	\tilde{O}(\sqrt{n}+\sqrt{m})
+	\]
+	
 \end{frame}
 
 
