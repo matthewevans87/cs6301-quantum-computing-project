@@ -377,7 +377,7 @@
   % bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
   So, the final structure of the algorithm is:
   \begin{itemize}
-    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $2m$ length each. Then use Grover's algorithm to find blocks containing a match. Matches are checked using Deterministic Sampling in $\tilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
+    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $\frac{m}{2}$ length each using Deterministic Sampling. Then use Grover's algorithm to find blocks containing a match. This takes $\tilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
           \[
             \tilde{O} ( \sqrt{n \over m} ) \times \tilde{O}(\sqrt{m}) = \tilde{O}(\sqrt{n})
           \]
@@ -396,8 +396,12 @@
 
 \section{Conclusion}
 \begin{frame}{Conclusion}
-  % list of key points
-  % why the paper matters
+  \begin{itemize}
+	\item Just like the probability of failure, the probability of success is a constant, and is greater than $\frac12$.
+	\item With a highly modular design, the algorithm's modules can be swapped out to accomplish different tasks with similar if not the same time complexity.
+	\item A problem left to the reader or to the future is dealing with don't cares in the same time bounds. The main issue is the implementation of quantum convolution using FFT in $\tilde{O}(\sqrt{n})$ time.
+	\item The main issue with the implementation of this algorithm is the assumed fast oracle, that are not present in the current tech stack of quantum computers.
+  \end{itemize}
 \end{frame}
 
 \end{document}
