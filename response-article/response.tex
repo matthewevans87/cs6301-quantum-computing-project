@@ -49,7 +49,7 @@ Grover's algorithm \cite{grover1996fastquantummechanicalalgorithm} addresses the
 Running in \(O(\sqrt{N})\) time, Grover's algorithm provides the core quantum search subroutine underpinning the \(\widetilde{O}(\sqrt{n}+\sqrt{m})\) string-matching algorithm.
 
 \subsection{Tight Bounds on Grover's (BBHT96)}
-\cite[Boyer, Brassard, Høyer, and Tapp]{Boyer_1998} show that even when the exact number of target items \(t\) in an unsorted database of size \(N\) is unknown, one can still locate a marked element in \(O(\sqrt(N/t))\) oracle calls with constant success probability. 
+\cite[Boyer, Brassard, Høyer, and Tapp]{Boyer_1998} show that even when the exact number of target items \(t\) in an unsorted database of size \(N\) is unknown, one can still locate a marked element in \(O(\sqrt(N/t))\) oracle calls with constant success probability.
 Their procedure adaptively adjusts the number of Grover iterations to achieve the same quadratic speedup without prior knowledge of \(t\). In our string-matching algorithm, this result is crucial: when searching a text block of length \(m/2\) for any matching alignment, we do not know in advance how many alignments will succeed, so we invoke BBHT96's method to retain the overall \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) runtime bound.
 
 \subsection{Deterministic Sampling (VI)}
@@ -140,10 +140,10 @@ Overall time: \(\widetilde O(\sqrt{m}\,\log^2 m) + O(1) + O(\sqrt{n} \log m) + O
 % discuss periodic vs. aperiodic patterns
 
 \subsection{Constant Two-Sided Failure Probability}
-The h(i) oracle which detects if a block contains a match succeeds with probability 3/4 and the following k(i,j) block can identify the correct starting position in the block with probability 3/4.
-The combined probability of success will be $frac{9}{16}$. The failure probability will be $frac{7}{16}$. There are two possible errors here. The oracle h(i) might fail to flag a block that contains a match or 
-the oracles h(i) and k(i,j) detect a match in a block that does not have one. So we can either get a false negative or false positive. The algorithm has a fixed chance of error which is 1-9/16=7/16. 
-We can reduce this error by repeating the process multiple times so the failure probability goes down to \(\frac{7}{16}^t\). 
+The h(i) oracle which detects if a block contains a match succeeds with probability \(3/4\) and the following \(k(i,j)\) block can identify the correct starting position in the block with probability 3/4.
+The combined probability of success will be \(\frac{9}{16}\). The failure probability will be \(\frac{7}{16}\). There are two possible errors here. The oracle \(h(i)\) might fail to flag a block that contains a match or
+the oracles h(i) and k(i,j) detect a match in a block that does not have one. So we can either get a false negative or false positive. The algorithm has a fixed chance of error which is \(1-9/16=7/16\).
+We can reduce this error by repeating the process multiple times so the failure probability goes down to \(\frac{7}{16}^t\).
 % discuss the importance of the constant two-sided failure probability as mentioned in the paper
 \subsection{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
 
