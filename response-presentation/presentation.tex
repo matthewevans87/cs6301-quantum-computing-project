@@ -195,7 +195,7 @@
   \end{block}
 \end{frame}
 
-\subsection{Section 3}
+\subsection{\(O(\sqrt{m}\ \sqrt{n})\) time algorithm}
 \begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n} )\)}
   \begin{block}{Outer Grovers algorthm}
     \begin{itemize}
@@ -208,7 +208,7 @@
       \item \ket{11}: index 3 ... index m+2 (def)
       \item Oracle f(i) applies phase kickback if match at position/state i
       \item EX: 1/sqrt(4) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
-      \item States provide index to search oracle
+      \item States provide position to search oracle
       \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers to find string match at desired state
       \item Goal: When we measure we want a state that maps to a matching substring
       \item How exactly does the oracle f(i) detect matches at a position/state?
@@ -216,7 +216,6 @@
   \end{block}
 \end{frame}
 
-\subsection{Section 3}
 \begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n})\) continued}
   \begin{block}{Inner Grovers algorithm}
     \begin{itemize}
