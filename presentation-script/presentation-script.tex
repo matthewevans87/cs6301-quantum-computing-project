@@ -58,11 +58,11 @@
 Hello everyone, my name is Matt and these are my teammates Nathan, and Ariz.
 We will be presenting on paper by \textit{Ramesh and Vinay} in which they provide a quantum string matching algorithm. The problem can be stated as follows: Given a text $t$ of length $n$ and a pattern $p$ of length $m$, decide whether $p$ occurs in $t$. The classical approach to this problem requires $\Theta(n + m)$.
 
-The authors which exploit amplitude amplification to beat this linear time and propose a quantum string-matching algorithm running in \(\widetilde{O}\bigl(\sqrt{n} + \sqrt{m}\bigr)\) with two-sided error probability.
+The authors exploit \textit{amplitude amplification} to beat this linear time. In their paper, they present a quantum string-matching algorithm running in \(\widetilde{O}\bigl(\sqrt{n} + \sqrt{m}\bigr)\) with two-sided error probability.
 
 \section*{Conceptual Dependencies Figure}
 \textbf{Matt} \linebreak
-Here we provide a figure mapping the conceptual dependencies the authors leverage to achieve their result.
+To guide our presentation, we here provide a figure mapping the conceptual dependencies the authors leverage to achieve their result.
 Grover's algorithm is central to the author's algorithm. On the left, we see the result of the BBHT96 paper, which provides a rigorous complexity bound on Grover's. On the right we see the need for a so-called "Minimum Finding Oracle" by Durr and Høyer which enables finding a ``minimum element''. Deterministic Sampling is a procedure introduced by Vishkin for reducing the number of comparisons needed between a pattern and text to identify matches. The authors considers two scenarios: matching aperiodic patterns, and matching those \textit{with} periodicity.
 All of these building blocks come together to produce the author's quantum string matching algorithm with time complexity \(\widetilde{O}(\sqrt{m} + \sqrt{n})\).
 
@@ -79,9 +79,9 @@ All of these building blocks come together to produce the author's quantum strin
 \section*{Deterministic Sampling}
 \textbf{Matt}\linebreak
 
-Imagine matching a pattern of length \(m\) against a sub-block of text of length \(\lceil m/2\rceil\). Naively, there are \(m/2\) possible alignments between the pattern and the text within this block, each costing \(\widetilde{O}(\sqrt{m})\) quantum time to check. Deterministic sampling is a procedure that selects an \(O(\log m)\)-sized set of pattern indices which rule out all but one of these alignments.
+Imagine matching a pattern of length \(m\) against a sub-block of text of length \(\lceil m/2\rceil\). Naively, there are \(m/2\) possible alignments between the pattern and the text within this block, each costing \(\widetilde{O}(\sqrt{m})\) quantum time to check. Deterministic sampling is a procedure that selects an \(O(\log m)\)-sized set of pattern indices which, when compared with the text in the block, rule out all but one of these alignments.
 
-The Key idea is that among the \(m/2\) alignments of the pattern with the text block, aperiodicity guarantees there to be a pattern index where at least two copies differ. Hence, checking for a pattern match at each index in \(S\) eliminates at least half the candidates. Repeating this halving process \(O(\log m)\) times results in a single surviving alignment.
+The Key idea is that among the \(m/2\) alignments of the pattern with the text block, aperiodicity guarantees there to be a pattern index where at least two copies differ. Hence, checking for a pattern match at each index in the set \(S\) eliminates at least half the candidates. Repeating this halving process \(O(\log m)\) times results in a single surviving alignment.
 
 Classically each round would compare \(O(m)\) characters. Quantum search and \textit{minimum-finding} reduce this to \(\widetilde O(\sqrt{m})\), which is the source of the \(\widetilde O(\sqrt{m})\) term in the algorithm's overall \(\widetilde O(\sqrt{n} + \sqrt{m})\) time.
 
