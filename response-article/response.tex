@@ -66,7 +66,7 @@ Deterministic sampling, introduced by \cite[Vishkin]{10.1145/100216.100235} is a
 Because only the single surviving alignment must undergo a full (quantum) check of cost \(\tilde O(\sqrt m)\), deterministic sampling reduces the number of such expensive checks per text block from \(m\) to \(1\).  This reduction is crucial to achieving the overall \(\widetilde{O}(\sqrt n + \sqrt m)\) runtime of the quantum string-matching algorithm.
 
 \subsection{Minimum Finding Oracle}
-The minimum-finding oracle given by \cite[Durr \& Høyer]{durr1999quantumalgorithmfindingminimum} locates the index of the smallest element in an unsorted database of size \(n\) in \(O(\sqrt{n})\) time using a comparison oracle. Beginning from a random index \(k\), it invokes Grover's algorithm to find any index \(i\) such that \(\text{database}[i]<\text{database}[k]\). If one is found, \(k\) is updated to \(i\) and the search repeats; if not, \(k\) is the minimum. This primitive underlies every ``pick the smallest (or leftmost) index satisfying some condition'' step in the paper. It is used to build the deterministic sample for aperiodic patterns—repeatedly halving the \(m/2\) candidate alignments in \(\widetilde{O}(\sqrt{m}\log m)\) time—and is invoked a second time to pinpoint the earliest text block containing the match, thereby preserving the overall \(\widetilde{O}(\sqrt{n}+\sqrt{m})\) runtime bound.
+The minimum-finding oracle given by \cite[Durr \& Høyer]{durr1999quantumalgorithmfindingminimum} locates the index of the smallest element in an unsorted database of size \(n\) in \(\widetilde{O}(\sqrt{n})\) time using a comparison oracle. Beginning from a random index \(k\), it invokes Grover's algorithm to find any index \(i\) such that \(\text{database}[i]<\text{database}[k]\). If one is found, \(k\) is updated to \(i\) and the search repeats; if not, \(k\) is the minimum. This primitive underlies every ``pick the smallest (or leftmost) index satisfying some condition'' step in the paper. It is used to build the deterministic sample for aperiodic patterns—repeatedly halving the \(m/2\) candidate alignments in \({O}(\sqrt{m}\log m)\) time—and is invoked a second time to pinpoint the earliest text block containing the match, thereby preserving the overall \(\widetilde{O}(\sqrt{n}+\sqrt{m})\) runtime bound.
 
 \begin{figure*}[!t]
     \centering
@@ -170,7 +170,7 @@ The minimum-finding oracle given by \cite[Durr \& Høyer]{durr1999quantumalgorit
     \item \textbf{Deterministic-Sampling Preprocessing.}
           \begin{itemize}
               \item Run Vishkin's deterministic-sampling on \(p\) of length \(m\) to obtain an \(O(\log m)\)-sized sample set \(S\).
-              \item Cost: \(\widetilde O(\sqrt{m}\,\log^2 m)\).
+              \item Cost: \(O(\sqrt{m}\,\log^2 m)\).
           \end{itemize}
     \item \textbf{Partition text into blocks}
           \begin{itemize}
@@ -200,19 +200,15 @@ The minimum-finding oracle given by \cite[Durr \& Høyer]{durr1999quantumalgorit
               \item Cost: \(O(\sqrt{m})\)
           \end{itemize}
 \end{enumerate}
-Overall time: \(\widetilde O(\sqrt{m}\,\log^2 m) + O(1) + O(\sqrt{n} \log m) + O(\sqrt{m} \log m) + O(\sqrt{m}) = \widetilde{O}(\sqrt{n} + \sqrt{m})\)
+Overall time: \(O(\sqrt{m}\,\log^2 m) + O(1) + O(\sqrt{n} \log m) + O(\sqrt{m} \log m) + O(\sqrt{m}) = \widetilde{O}(\sqrt{n} + \sqrt{m})\)
 
 \subsection{Concerning Periodicity}
 % discuss periodic vs. aperiodic patterns
 
 \subsection{Constant Two-Sided Failure Probability}
-The h(i) oracle which detects if a block contains a match succeeds with probability \(3/4\) and the following \(k(i,j)\) block can identify the correct starting position in the block with probability 3/4.
-The combined probability of success will be \(\frac{9}{16}\). The failure probability will be \(\frac{7}{16}\). There are two possible errors here. The oracle \(h(i)\) might fail to flag a block that contains a match or
-the oracles h(i) and k(i,j) detect a match in a block that does not have one. So we can either get a false negative or false positive. The algorithm has a fixed chance of error which is \(1-\frac{9}{16} = \frac{7}{16}\).
-We can reduce this error by repeating the process multiple times so the failure probability goes down to \(\frac{7}{16}^t\).
+The \(h(i)\) oracle which detects if a block contains a match succeeds with probability \(\frac{3}{4}\) and the following \(k(i,j)\) block can identify the correct starting position in the block with probability \(\frac{3}{4}\). The combined probability of success will be \(\frac{9}{16}\). The failure probability will be \(\frac{7}{16}\). There are two possible errors here. The oracle \(h(i)\) might fail to flag a block that contains a match or
+the oracles \(h(i)\) and \(k(i,j)\) detect a match in a block that does not have one. So we can either get a false negative or false positive. The algorithm has a fixed chance of error which is \(1-\frac{9}{16} = \frac{7}{16}\). We can reduce this error by repeating the process multiple times so the failure probability goes down to \(\frac{7}{16}^t\).
 % discuss the importance of the constant two-sided failure probability as mentioned in the paper
-\subsection{Achieving \texorpdfstring{$\tilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
-% bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
 
 \bibliographystyle{plain}
 \bibliography{references}
