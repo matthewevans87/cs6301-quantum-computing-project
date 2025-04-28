@@ -132,42 +132,42 @@
 \end{frame}
 
 \subsection{\(O(\sqrt{n}\ \sqrt{m})\) time algorithm}
-\begin{frame}{String Match in \(O(\sqrt{n}\ \sqrt{m} )\)}
+\begin{frame}{String Match in \(\widetilde{O}(\sqrt{n}\ \sqrt{m} )\)}
   \begin{block}{Outer Grovers algorthm}
     \begin{itemize}
       \item n = size of text, m = size of pattern, n - m + 1 = comparisons
       \item EX: text = abcdef, pattern = def, n = 6, m = 3.
       \item abc, bcd, cde, and def
-      \item \ket{00}: index 0 ... index m-1 (abc)
-      \item \ket{01}: index 1 ... index m   (bcd)
-      \item \ket{10}: index 2 ... index m+1 (cde)
-      \item \ket{11}: index 3 ... index m+2 (def)
-      \item Oracle f(i) applies phase kickback if match at position/state i
-      \item EX: 1/sqrt(4) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
+      \item \ket{00}: index 0 ... index \(m-1\) (abc)
+      \item \ket{01}: index 1 ... index \(m\)   (bcd)
+      \item \ket{10}: index 2 ... index \(m+1\) (cde)
+      \item \ket{11}: index 3 ... index \(m+2\) (def)
+      \item Oracle \(f(i)\) applies phase kickback if match at position/state \(i\)
+      \item EX: \(1\/\sqrt(4)\) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
       \item States provide position to search oracle
-      \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers
-      \item How exactly does the oracle f(i) detect matches?
+      \item n usually dominates so \(\widetilde{O}(\sqrt{n})\) iterations of grovers
+      \item How exactly does the oracle \(f(i)\) detect matches?
     \end{itemize}
   \end{block}
 \end{frame}
 
 \begin{frame}{String Match in \(O(\sqrt{n}\ \sqrt{m})\) continued}
-  \begin{block}{Understanding f(i)}
+  \begin{block}{Understanding \(f(i)\)}
     \begin{itemize}
       \item Goal: Detect match between two strings
-      \item f(i) detects mismatches between its substring and the pattern
-      \item Grovers inside f(i) to find mismatch
+      \item \(f(i)\) detects mismatches between its substring and the pattern
+      \item Grover's inside \(f(i)\) to find mismatch
 
 
     \end{itemize}
   \end{block}
   \begin{block}{Inner Grovers algorithm}
     \begin{itemize}
-      \item States are indices 0,1,...,m-1. Goal state is a k s.t. pattern[k] $\neq$ text[i+k]
-      \item Search oracle g(i,j) returns 1 if  pattern[j] $\neq$ text[i+j]
-      \item Apply search oracle onto superposition 1/$\sqrt{m}$ g(i,j) $\sum_{j=0}^{m} $\ket{j}
+      \item States are indices \(0,1,\dots,m-1\). Goal state is a \(k\) s.t. \(\text{pattern}[k] \neq \text{text}[i+k]\)
+      \item Search oracle \(g(i,j)\) returns \(1\) if \(\text{pattern}[j] \neq \text{text}[i+j]\)
+      \item Apply search oracle onto superposition 1/$\sqrt{m}$ \(g(i,j)\) $\sum_{j=0}^{m} \ket{j} $
       \item Mismatched states will have their amplitudes increased
-      \item After \(O(\sqrt{m})\) iterations measurement will give index of mismatch with high probability
+      \item After \(\widetilde{O}(\sqrt{m})\) iterations measurement will give index of mismatch with high probability
     \end{itemize}
   \end{block}
 \end{frame}
@@ -312,8 +312,8 @@
   \begin{enumerate}
     \item \textbf{Deterministic-Sampling Preprocessing.}
           \begin{itemize}
-            \item Run Vishkin's deterministic-sampling on \(p\) of length \(m\) to obtain an \(O(\log m)\)-sized sample set \(S\).
-            \item Cost: \(\widetilde O(\sqrt{m}\,\log^2 m)\).
+            \item Run Vishkin's deterministic-sampling on pattern \(p\) of length \(m\) to obtain an \(O(\log m)\)-sized sample set \(S\).
+            \item Cost: \(\widetilde{O}(\sqrt{m})\).
           \end{itemize}
     \item \textbf{Partition the text.}
           \begin{itemize}
@@ -326,7 +326,7 @@
     \item \textbf{Quantum search for a “hit” block.}
           \begin{itemize}
             \item Define oracle \(h(i)\): tests if block \(i\) has at least one alignment matching on all positions in \(S\) in \(\widetilde O(\sqrt{m}\,\log m)\) time.
-            \item Use Grover search over \(i=1,\dots,B\) with oracle \(h\); time \(\widetilde O(\sqrt{n}\,\log m)\). If none found, conclude “no occurrence.”
+            \item Use Grover search over \(i=1,\dots,B\) with oracle \(h\); time \(\widetilde{O}(\sqrt{n})\). If none found, conclude “no occurrence.”
           \end{itemize}
   \end{enumerate}
 \end{frame}
