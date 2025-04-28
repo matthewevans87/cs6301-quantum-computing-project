@@ -183,7 +183,7 @@ The minimum-finding oracle given by \cite[Durr \& Høyer]{durr1999quantumalgorit
           \end{itemize}
     \item \textbf{Block search using Oracle \(h\)}
           \begin{itemize}
-              \item Define oracle \(h(i)\): tests if block \(i\) has at least one alignment matching on all positions in \(S\) in \(\widetilde O(\sqrt{m}\,\log m)\) time.
+              \item Define oracle \(h(i)\): tests if block \(i\) has at least one alignment matching on all positions in \(S\) in \(O(\sqrt{m}\,\log m)\) time.
               \item Use Grover search over \(i=1,\dots,B\) with oracle \(h\). If none found, conclude ``no occurrence.''
               \item Cost: \(O(\sqrt{n} \log m)\)
           \end{itemize}
