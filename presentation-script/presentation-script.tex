@@ -55,18 +55,10 @@
 
 \section*{Introduction}
 \textbf{Matt} \linebreak
-\begin{itemize}
-  \item Introduce Team: Matthew Evans, Nathan Puskuri, and Ariz Saddiqui
-  \item We will be presenting on paper by H. Ramesh \& V. Vinay in which they provide a quantum string matching algorithm.
-  \item \textbf{Problem Statement:} Given a text $t$ of length $n$ and a pattern $p$ of length $m$, decide whether $p$ occurs in $t$.
-  \item The classical algorithm requires $\Theta(n + m)$
-  \item The authors exploit amplitude amplification to beat this linear time.
-  \item \textbf{Main result:} A quantum algorithm running in
-        \[
-          \widetilde{O}\bigl(\sqrt{n} + \sqrt{m}\bigr)
-        \]
-        with constant two-sided error probability.
-\end{itemize}
+Hello everyone, my name is Matt and these are my teammates Nathan, and Ariz.
+We will be presenting on paper by \textit{Ramesh and Vinay} in which they provide a quantum string matching algorithm. The problem can be stated as follows: Given a text $t$ of length $n$ and a pattern $p$ of length $m$, decide whether $p$ occurs in $t$. The classical approach to this problem requires $\Theta(n + m)$.
+
+The authors which exploit amplitude amplification to beat this linear time and propose a quantum string-matching algorithm running in \(\widetilde{O}\bigl(\sqrt{n} + \sqrt{m}\bigr)\) with two-sided error probability.
 
 \section*{Conceptual Dependencies Figure}
 \textbf{Matt} \linebreak
@@ -83,75 +75,48 @@ All of these building blocks come together to produce the author's quantum strin
 \section*{String Matching in \(O(\sqrt{n} \sqrt{m})\)}
 \textbf{Nathan} \linebreak
 
+% 1:05
 \section*{Deterministic Sampling}
 \textbf{Matt}\linebreak
-% Mention aperiodic strings, which is why the m/2 length is relevant.
-Imagine you have a pattern of length m that you want to match against a block of text of length roughly \(m/2\). Naively there are \(m/2\) possible alignments to check, and even a quantum search over all of them costs \(\sqrt(m)\) time each. Deterministic sampling is a clever trick (originally due to Vishkin) that lets us rule out all but one candidate alignment by examining only an \(O(\log m)\)-sized set of ``sample'' of pattern positions.
 
-Here's the key idea for aperiodic patterns: imagine laying down all \(m/2\) shifted copies of your pattern above the text block. Because the pattern is aperiodic, there must be at least one column (pattern index) in which two of these copies differ. If you pick that column and look at the two distinct characters there, then at most one of the copies can match your text at that column. Eliminating the other half of the copies—and repeating this process—quickly isolates a single surviving copy.
+Imagine matching a pattern of length \(m\) against a sub-block of text of length \(\lceil m/2\rceil\). Naively, there are \(m/2\) possible alignments between the pattern and the text within this block, each costing \(\widetilde{O}(\sqrt{m})\) quantum time to check. Deterministic sampling is a procedure that selects an \(O(\log m)\)-sized set of pattern indices which rule out all but one of these alignments.
 
-\section*{Steps}
-\begin{enumerate}
-  \item Initialize \begin{itemize}
-          \item Label copies \(1, 2, \dots, m/2\)
-          \item Let the sample set \(S\) be empty
-        \end{itemize}
-  \item Repeat \(O(\log m)\) times \begin{itemize}
-          \item Find a column \(c\) where at least two surviving copies disagree.
-          \item Add \(c\) to \(S\).
-          \item Pick the minority character \(\mathcal{X}\) at \(c\), and discard any copy whose character at \(c \neq \mathcal{X}\).
-          \item This halfs the number of ``survivors'' each round.
-        \end{itemize}
-  \item Result \begin{itemize}
-          \item You end up with exactly one copy \(p^\star\) and a sample set \(S\) of size \(O(\log m)\).
-          \item Any alignment that matches the text at \textit{any} positions in \(S\) must be that copy; you've reduced \(m/2\) possibilities to one candidate.
-        \end{itemize}
-\end{enumerate}
+The Key idea is that among the \(m/2\) alignments of the pattern with the text block, aperiodicity guarantees there to be a pattern index where at least two copies differ. Hence, checking for a pattern match at each index in \(S\) eliminates at least half the candidates. Repeating this halving process \(O(\log m)\) times results in a single surviving alignment.
 
-\subsection*{Efficiency}
-Classical sampling takes \(O(m)\) time to scan all columns each round; quantumly we can replace those scans with Grover-search and quantum minimum-finding to achieve an overall preprocessing time of \(\widetilde{O}()\sqrt{m} \log^2 m\).
+Classically each round would compare \(O(m)\) characters. Quantum search and \textit{minimum-finding} reduce this to \(\widetilde O(\sqrt{m})\), which is the source of the \(\widetilde O(\sqrt{m})\) term in the algorithm's overall \(\widetilde O(\sqrt{n} + \sqrt{m})\) time.
 
-\subsection*{Integration}
-In the full quantum string-matching algorithm, you run this sampling once on the pattern, reuse the same \(S\) for every text block, and only need one expensive \(\sqrt{m}\)-time check per block—yielding a sublinear quantum speed-up.
 
-\subsection*{Conclusion}
-Deterministic sampling thus gives a small, carefully chosen set of pattern positions that rules out almost all bad alignments. It's the linchpin that turns a naive \(sqrt{nm}\) quantum approach into an \(\widetilde{O}(\sqrt{n} + \sqrt{m})\) algorithm.
-
+% 0:50
 \section*{DH96 - Minimum Finding Oracle}
-\section*{Concept \& Intuition}
-\begin{enumerate}
-  \item \textbf{Random Starting Point}
-        Pick an index \(k\) uniformly at random.
-  \item \textbf{Grover Search for Improvement}
-        Use Grover's subroutine to search for any index \(i\) such that
-        \[
-          \text{item}[i] < \text{item}[k].
-        \]
-        \begin{itemize}
-          \item If none is found, \(k\) is the minimum.
-          \item If one is found, set \(k \leftarrow i\) (you've found a strictly smaller item).
-        \end{itemize}
-  \item \textbf{Iterate}
-        Repeat the Grover search/update step a small constant number of times until no better index appears.
-  \item \textbf{Geometric Speed-Up}
-        Each search costs \(O(\sqrt{n/t})\) where \(t\) is the number of strictly smaller elements (initially up to \(n-1\)), and the sequence of improvements converges in \(O(\sqrt{n})\) total time.
-\end{enumerate}
+\textbf{Matt}\linebreak
+As mentioned, the algorithm uses a ``minimum-finding'' procedure, specifically, a minimum-finding oracle, leveraged by a Grover's-style search.
 
-\section*{Why It Matters}
-\begin{itemize}
-  \item \textbf{Quantum vs.\ Classical:} Reduces the “find-min” cost from linear to square-root time.
-  \item \textbf{General-Purpose Primitive:} You can wrap any Boolean test (“is this element in our candidate set?”) and efficiently extract the smallest satisfying index.
-  \item \textbf{Key Uses in Ramesh--Vinay:}
-        \begin{itemize}
-          \item Identifying the leftmost text block that might contain a match.
-          \item Finding the leftmost or rightmost surviving pattern copy when building the deterministic sample.
-        \end{itemize}
-\end{itemize}
+In minimum finding, one begins by selecting a random index \(k\) and then uses Grover’s search to locate any index \(i\) such that \(\text{item}[i]\) is less than \(\text{item}[k]\). If none is found, \(k\) is the minimum; otherwise, one updates \(k\) to the value of \(i\) and repeats the search a constant number of times. Each quantum search costs \(\widetilde{O}(\sqrt{n/t})\), where \(t\) is the current number of smaller elements. The geometric reduction of \(t\) yields an overall \(\widetilde{O}(\sqrt{n})\) runtime. This procedure transforms classical linear‐time minimum finding into a square‐root‐time subroutine, which is used to identify the leftmost text block that may containing a match.
+
+% 1:10
+\section*{The Algorithm}
+\textbf{Matt} \linebreak
+
+Now let's see how these pieces fit together.
+
+On the left we see the set \(S\) of sample indices being returned from Deterministic Sampling, and the ``database'' \(D_B\) containing the \(B\) partitions of the text, each with length \(m/2\).
+
+In the central column, we have an alternating pattern of Oracle construction and applications of Grover's Algorithm.
+
+First, the so-called ``hit'' oracle \(h\) is constructed based on the set \(S\).
+An application of Grover's uses oracle \(h\) over database \(D_B\) to find the index of a candidate block, \(i^\star\).
+
+Second, the ``candidate'' oracle \(k\) is constructed based on index \(i^\star\). Grover's is applied using oracle \(k\) to the database \(D_J\) containing all possible alignments within block \(i^\star\). This procedure finds a the sub-index \(j^\star\) where the indices in \(S\) aligns with the text.
+
+Lastly, the ``mismatch'' oracle \(g\), which is an application of the ``minimum finding oracle'', is constructed based on \(i^\star\) and \(j^\star\). Grover's is applied a third time, and performs a full verification over all indices \(\ell\) within the selected alignment \(j^\star\) in block \(i^\star\).
+
+If no mismatches are found, then we know the given pattern matches the text, specifically, at the index \(i^\star + j^\star\).
 
 
 
-\section*{Wrap-up}
-The DH96 minimum-finding oracle turns a linear scan into an \(O(\sqrt{n})\) quantum subroutine. By interleaving random picks with Grover searches for improvements, it guarantees a high-probability success in square-root time. This powerful tool underlies every step in the paper where we need the “smallest” or “first” index—crucial for block selection, sample building, and periodic-pattern handling.
+% TODO: ensure none of this is critical
+% \section*{Wrap-up}
+% The DH96 minimum-finding oracle turns a linear scan into an \(O(\sqrt{n})\) quantum subroutine. By interleaving random picks with Grover searches for improvements, it guarantees a high-probability success in square-root time. This powerful tool underlies every step in the paper where we need the “smallest” or “first” index—crucial for block selection, sample building, and periodic-pattern handling.
 
 \section*{Periodicity}
 \textbf{Ariz} \linebreak
