@@ -26,9 +26,67 @@
 \begin{document}
 \maketitle
 
+\section*{Order of Speakers}
+\begin{enumerate}
+  \item Matt
+        \begin{itemize}
+          \item Introduce team
+          \item Intro Slide
+          \item Conceptual Dependencies Figure
+        \end{itemize}
+  \item Nathan \begin{itemize}
+          \item Grover's Algorithm
+          \item BBHT96
+          \item Probablistic Oracles
+          \item String Matching in \(O(\sqrt{n} \sqrt{m})\)
+        \end{itemize}
+  \item Matt \begin{itemize}
+          \item Deterministic Sampling
+          \item DH96: Minimum Finding Oracle
+          \item The Algorithm (steps)
+        \end{itemize}
+  \item Ariz \begin{itemize}
+          \item Periodicity
+          \item Constant Two-sided failure probability
+          \item Achieving \(\tilde{O}(\sqrt{n} + \sqrt{m})\)
+          \item Conclusion
+        \end{itemize}
+\end{enumerate}
+
+\section*{Introduction}
+\textbf{Matt} \linebreak
+\begin{itemize}
+  \item Introduce Team: Matthew Evans, Nathan Puskuri, and Ariz Saddiqui
+  \item We will be presenting on paper by H. Ramesh \& V. Vinay in which they provide a quantum string matching algorithm.
+  \item \textbf{Problem Statement:} Given a text $t$ of length $n$ and a pattern $p$ of length $m$, decide whether $p$ occurs in $t$.
+  \item The classical algorithm requires $\Theta(n + m)$
+  \item The authors exploit amplitude amplification to beat this linear time.
+  \item \textbf{Main result:} A quantum algorithm running in
+        \[
+          \widetilde{O}\bigl(\sqrt{n} + \sqrt{m}\bigr)
+        \]
+        with constant two-sided error probability.
+\end{itemize}
+
+\section*{Conceptual Dependencies Figure}
+\textbf{Matt} \linebreak
+Here we provide a figure mapping the conceptual dependencies the authors leverage to achieve their result.
+Grover's algorithm is central to the author's algorithm. On the left, we see the result of the BBHT96 paper, which provides a rigorous complexity bound on Grover's. On the right we see the need for a so-called "Minimum Finding Oracle" by Durr and Høyer which enables finding a ``minimum element''. Deterministic Sampling is a procedure introduced by Vishkin for reducing the number of comparisons needed between a pattern and text to identify matches. The authors considers two scenarios: matching aperiodic patterns, and matching those \textit{with} periodicity.
+All of these building blocks come together to produce the author's quantum string matching algorithm with time complexity \(\widetilde{O}(\sqrt{m} + \sqrt{n})\).
+
+\section*{Grover's Algorithm}
+\textbf{Nathan} \linebreak
+\section*{BBHT96}
+\textbf{Nathan} \linebreak
+\section*{Probablistic Oracles}
+\textbf{Nathan} \linebreak
+\section*{String Matching in \(O(\sqrt{n} \sqrt{m})\)}
+\textbf{Nathan} \linebreak
+
 \section*{Deterministic Sampling}
+\textbf{Matt}\linebreak
 % Mention aperiodic strings, which is why the m/2 length is relevant.
-Imagine you have a pattern of length m that you want to match against a block of text of length roughly \(m/2\). Naively there are \(m/2\) possible alignments to check, and even a quantum search over all of them costs \(sqrt(m)\) time each. Deterministic sampling is a clever trick (originally due to Vishkin) that lets us rule out all but one candidate alignment by examining only an \(O(\log m)\)-sized set of ``sample'' of pattern positions.
+Imagine you have a pattern of length m that you want to match against a block of text of length roughly \(m/2\). Naively there are \(m/2\) possible alignments to check, and even a quantum search over all of them costs \(\sqrt(m)\) time each. Deterministic sampling is a clever trick (originally due to Vishkin) that lets us rule out all but one candidate alignment by examining only an \(O(\log m)\)-sized set of ``sample'' of pattern positions.
 
 Here's the key idea for aperiodic patterns: imagine laying down all \(m/2\) shifted copies of your pattern above the text block. Because the pattern is aperiodic, there must be at least one column (pattern index) in which two of these copies differ. If you pick that column and look at the two distinct characters there, then at most one of the copies can match your text at that column. Eliminating the other half of the copies—and repeating this process—quickly isolates a single surviving copy.
 
@@ -90,10 +148,18 @@ Deterministic sampling thus gives a small, carefully chosen set of pattern posit
         \end{itemize}
 \end{itemize}
 
+
+
 \section*{Wrap-up}
 The DH96 minimum-finding oracle turns a linear scan into an \(O(\sqrt{n})\) quantum subroutine. By interleaving random picks with Grover searches for improvements, it guarantees a high-probability success in square-root time. This powerful tool underlies every step in the paper where we need the “smallest” or “first” index—crucial for block selection, sample building, and periodic-pattern handling.
 
-
-
+\section*{Periodicity}
+\textbf{Ariz} \linebreak
+\section*{Constant Two-sided failure probability}
+\textbf{Ariz} \linebreak
+\section*{Achieving \(\tilde{O}(\sqrt{n} + \sqrt{m})\)}
+\textbf{Ariz} \linebreak
+\section*{Conclusion}
+\textbf{Ariz} \linebreak
 
 \end{document}
