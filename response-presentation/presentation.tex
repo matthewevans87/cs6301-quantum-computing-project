@@ -378,13 +378,13 @@
 \subsection{Achieving \texorpdfstring{$\widetilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
 \begin{frame}{Achieving \texorpdfstring{$\widetilde{O}(\sqrt{n} + \sqrt{m})$}{O(sqrt(n)+sqrt(m))}}
   % bring everything together. Give a run-through of the entire algorithm, putting all the pieces together. 
-  So, the final structure of the algorithm is:
+  The final structure of the algorithm becomes:
   \begin{itemize}
-    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $2m$ length each. Then use Grover's algorithm to find blocks containing a match. Matches are checked using Deterministic Sampling in $\widetilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
+    \item \textbf{Block Search: }Divide a given string into overlapping blocks of $\frac{m}{2}$ length. Then use Grover's algorithm with a search oracle which compares sample indices from Deterministic Sampling to find blocks containing a match. This takes $\widetilde{O}(\sqrt{m})$ time per block. For all the blocks, the time complexity becomes:
           \[
             \widetilde{O} \left(\sqrt{n \over m}\right) \times \widetilde{O}(\sqrt{m}) = \widetilde{O}(\sqrt{n})
           \]
-    \item \textbf{Fine Matching: }Once a block is found, use Quantum Minimum Finding over $O(m)$ candidate positions within the block. Thus, the time complexity for this step becomes:
+    \item \textbf{Fine Matching: }Once a block is found, use Grover's Search over $O(m)$ candidate positions within the block. Thus, the time complexity for this step becomes:
           \[
             \widetilde{O}(\sqrt{m})
           \]
@@ -393,15 +393,18 @@
   \[
     \widetilde{O}(\sqrt{n}+\sqrt{m})
   \]
-
+  Where $\widetilde{O}$ omits polylog-terms in the expression.
 \end{frame}
 
 
 \section{Conclusion}
 \begin{frame}{Conclusion}
-  \section*{Conclusion}
-  In summary, by combining Grover's amplitude-amplification for block-level search, Dürr-Høyer's \(O(\sqrt{n})\) minimum-finding to locate the earliest candidate, and Vishkin's \(O(\log m)\) deterministic sampling to isolate a single alignment, Ramesh and Vinay transform the classical \(\Theta(n + m)\) string-matching problem into a quantum algorithm running in \(\widetilde O(\sqrt{n} + \sqrt{m})\) time with constant two-sided error.
-
+  \begin{itemize}
+    \item Just like the probability of failure, the probability of success is a constant, and is greater than $\frac12$.
+    \item With a highly modular design, the algorithm's modules can be swapped out to accomplish different tasks with similar if not the same time complexity.
+    \item A problem left to the reader or to the future is dealing with don't cares (i.e., ``wild-cards'') in the same time bounds. The main issue is the implementation of quantum convolution using FFT in $\widetilde{O}(\sqrt{n})$ time.
+    \item The main issue with the implementation of this algorithm is the assumed fast oracle, that is not present in the current tech stack of quantum computers.
+  \end{itemize}
 \end{frame}
 
 \end{document}
