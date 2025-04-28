@@ -195,11 +195,11 @@
   \end{block}
 \end{frame}
 
-\subsection{Section 3}
-\begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n} )\)}
+\subsection{\(O(\sqrt{n}\ \sqrt{m})\) time algorithm}
+\begin{frame}{String Match in \(O(\sqrt{n}\ \sqrt{m} )\)}
   \begin{block}{Outer Grovers algorthm}
     \begin{itemize}
-      \item n = size of text, m = size of pattern. n - m + 1 = number of comparisons/states
+      \item n = size of text, m = size of pattern, n - m + 1 = comparisons
       \item EX: text = abcdef, pattern = def, n = 6, m = 3.
       \item abc, bcd, cde, and def
       \item \ket{00}: index 0 ... index m-1 (abc)
@@ -208,27 +208,30 @@
       \item \ket{11}: index 3 ... index m+2 (def)
       \item Oracle f(i) applies phase kickback if match at position/state i
       \item EX: 1/sqrt(4) \textbf{f(i)} (\ket{00} + \ket{01} + \ket{10} + \ket{11})
-      \item States provide index to search oracle
-      \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers to find string match at desired state
-      \item Goal: When we measure we want a state that maps to a matching substring
-      \item How exactly does the oracle f(i) detect matches at a position/state?
+      \item States provide position to search oracle
+      \item n usually dominates so \(O(\sqrt{n})\) iterations of grovers 
+      \item How exactly does the oracle f(i) detect matches?
     \end{itemize}
   \end{block}
 \end{frame}
 
-\subsection{Section 3}
-\begin{frame}{String Match in \(O(\sqrt{m}\ \sqrt{n})\) continued}
+\begin{frame}{String Match in \(O(\sqrt{n}\ \sqrt{m})\) continued}
+  \begin{block}{Understanding f(i)}
+    \begin{itemize}
+      \item Goal: Detect match between two strings
+      \item f(i) detects mismatches between its substring and the pattern
+      \item Grovers inside f(i) to find mismatch
+
+      
+    \end{itemize}
+  \end{block}
   \begin{block}{Inner Grovers algorithm}
     \begin{itemize}
-      \item How does the search oracle f(i) detect matches? f(i) performs Grovers algorithm
-      \item Goal: Another grovers algorithm that maps to an integer j such that i+j is a mismatch
-      \item After the search oracle f(i) acts on a state it knows where the starting position of the substring in the text, i
-      \item Now the oracle f(i) needs to detect if there exists a text[i+j] thats not equal to pattern[j] where j is an integer from [0,m]
-      \item This can be done with another grovers search with
-      \item Our states in the superposition $\sum_{j=0}^{m} a$
-      \item Inside f(i) we have search oracle g(i,j) which acts on states i to i+m-1
-      \item g(i,j) applies inverts phase of state when text[i+j] != pattern[j]
-      \item
+      \item States are indices 0,1,...,m-1. Goal state is a k s.t. pattern[k] $\neq$ text[i+k]
+      \item Search oracle g(i,j) returns 1 if  pattern[j] $\neq$ text[i+j]
+      \item Apply search oracle onto superposition 1/$\sqrt{m}$ g(i,j) $\sum_{j=0}^{m} $\ket{j}
+      \item Mismatched states will have their amplitudes increased
+      \item After \(O(\sqrt{m})\) iterations measurement will give index of mismatch with high probability
     \end{itemize}
   \end{block}
 \end{frame}
