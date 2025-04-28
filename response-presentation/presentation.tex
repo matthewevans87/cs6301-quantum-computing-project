@@ -84,69 +84,6 @@
   \end{figure}
 \end{frame}
 
-\begin{frame}{The Algorithm}
-  \begin{figure}
-    \centering
-    \resizebox{1\textwidth}{!}{%
-      \begin{tikzpicture}[
-        scale=0.8,
-        >={Stealth[]},
-        % every node/.style={font=\small, text width=cm, align=center},
-        node distance=1.5cm and 2.5cm
-        ]
-
-
-        \node[draw, rounded corners] (GetHitOracle) {\(h(i) = GetHitOracle(S)\)};
-
-        \node[draw, rounded corners, label=above right:{\scriptsize\textcolor{blue}{ \(O(\sqrt{n} \log m)\)}}]
-        (groverh) [below of=GetHitOracle] {\(i^\star = Grover(h, D_B)\)};
-
-        \node[draw, rounded corners] (GetCandidateOracle) [below of=groverh] {\(h(i) = GetCandidateOracle(i^\star)\)};
-
-        \node[draw, rounded corners, label=above right:{\scriptsize\textcolor{blue}{\(O(\sqrt{m} \log m)\)}}]
-        (groverk) [below of=GetCandidateOracle] {\(j^\star = Grover(k, D_J)\)};
-
-        \node[draw, rounded corners] (GetMismatchOracle) [below of=groverk] {\(g(\ell) = GetMismatchOracle(i^\star, j^\star)\)};
-
-        \node[draw, rounded corners, label=above right:{\scriptsize \textcolor{blue}{\(O(\sqrt{m})\)}}]
-        (groverg) [below of=GetMismatchOracle] {\(j^\star = Grover(k, D_L)\)};
-
-        \node[draw, rounded corners] (return) [below of=groverg] {\texttt{\(\text{return~} i^\star + j^\star\)}};
-
-        \node[draw, rounded corners, label=above right:{\scriptsize \textcolor{blue}{\(O(\sqrt{m}\,\log^2 m)\)}}, left=3cm of GetHitOracle]
-        (detsamp) {\(S = \mathrm{detsamp}(p)\)};
-
-        \node[draw, rounded corners, text width=3cm, align=left,
-        label=above right:{\scriptsize \textcolor{blue}{\(O(1)\)}},
-        label=below:{\scriptsize \(B = \lceil 2(n-m+1)/m \rceil\)},
-        left=3cm of groverh]
-        (partition)
-        {Partition \(t\) into \(B\) blocks of size \(m/2\)};
-
-        \node[draw, rounded corners] (nooccur) [right=4cm of groverk] {\texttt{return} ``No Occurrence''};
-
-
-        % Edges
-        \draw[->] (detsamp.east) to node[midway, above] {\(S\)} (GetHitOracle.west);
-        \draw[->] (partition.east) to node[midway, above] {\(D_B\)} (groverh.west);
-
-        \draw[->]  (GetHitOracle) to node[midway, left] {\(h\)} (groverh);
-        \draw[->]  (groverh) to node[midway, left] {\(i^\star\)} (GetCandidateOracle);
-        \draw[->]  (GetCandidateOracle) to node[midway, left] {\(k\)} (groverk);
-        \draw[->]  (groverk) to node[midway, left] {\(j^\star\)} (GetMismatchOracle);
-        \draw[->]  (GetMismatchOracle) to node[midway, left] {\(g\)} (groverg);
-        \draw[->]  (groverg) to node[midway, left] {No Mismatch} (return);
-
-        \draw[->, bend left]  (groverh) to node[midway, above] {\(h(i) = 0 \forall i\)} (nooccur);
-        \draw[->]  (groverk) to node[midway, above] {\(k(j) = 0 \forall j\)} (nooccur);
-        \draw[->, bend right]  (groverg) to node[midway, above] {mismatch found} (nooccur);
-
-      \end{tikzpicture}%
-    }
-    \label{fig:quantum-string-matching-alg}
-  \end{figure}
-\end{frame}
-
 \section{Preliminaries}
 \subsection{Grover's Algorithm}
 \begin{frame}{Grover's Algorithm}
@@ -307,6 +244,70 @@
 \section{Quantum String Matching}
 
 \subsection{The Algorithm}
+\begin{frame}{The Algorithm}
+  \begin{figure}
+    \centering
+    \resizebox{1\textwidth}{!}{%
+      \begin{tikzpicture}[
+        scale=0.8,
+        >={Stealth[]},
+        % every node/.style={font=\small, text width=cm, align=center},
+        node distance=1.5cm and 2.5cm
+        ]
+
+
+        \node[draw, rounded corners] (GetHitOracle) {\(h(i) = GetHitOracle(S)\)};
+
+        \node[draw, rounded corners, label=above right:{\scriptsize\textcolor{blue}{ \(O(\sqrt{n} \log m)\)}}]
+        (groverh) [below of=GetHitOracle] {\(i^\star = Grover(h, D_B)\)};
+
+        \node[draw, rounded corners] (GetCandidateOracle) [below of=groverh] {\(h(i) = GetCandidateOracle(i^\star)\)};
+
+        \node[draw, rounded corners, label=above right:{\scriptsize\textcolor{blue}{\(O(\sqrt{m} \log m)\)}}]
+        (groverk) [below of=GetCandidateOracle] {\(j^\star = Grover(k, D_J)\)};
+
+        \node[draw, rounded corners] (GetMismatchOracle) [below of=groverk] {\(g(\ell) = GetMismatchOracle(i^\star, j^\star)\)};
+
+        \node[draw, rounded corners, label=above right:{\scriptsize \textcolor{blue}{\(O(\sqrt{m})\)}}]
+        (groverg) [below of=GetMismatchOracle] {\(j^\star = Grover(k, D_L)\)};
+
+        \node[draw, rounded corners] (return) [below of=groverg] {\texttt{\(\text{return~} i^\star + j^\star\)}};
+
+        \node[draw, rounded corners, label=above right:{\scriptsize \textcolor{blue}{\(O(\sqrt{m}\,\log^2 m)\)}}, left=3cm of GetHitOracle]
+        (detsamp) {\(S = \mathrm{detsamp}(p)\)};
+
+        \node[draw, rounded corners, text width=3cm, align=left,
+        label=above right:{\scriptsize \textcolor{blue}{\(O(1)\)}},
+        label=below:{\scriptsize \(B = \lceil 2(n-m+1)/m \rceil\)},
+        left=3cm of groverh]
+        (partition)
+        {Partition \(t\) into \(B\) blocks of size \(m/2\)};
+
+        \node[draw, rounded corners] (nooccur) [right=4cm of groverk] {\texttt{return} ``No Occurrence''};
+
+
+        % Edges
+        \draw[->] (detsamp.east) to node[midway, above] {\(S\)} (GetHitOracle.west);
+        \draw[->] (partition.east) to node[midway, above] {\(D_B\)} (groverh.west);
+
+        \draw[->]  (GetHitOracle) to node[midway, left] {\(h\)} (groverh);
+        \draw[->]  (groverh) to node[midway, left] {\(i^\star\)} (GetCandidateOracle);
+        \draw[->]  (GetCandidateOracle) to node[midway, left] {\(k\)} (groverk);
+        \draw[->]  (groverk) to node[midway, left] {\(j^\star\)} (GetMismatchOracle);
+        \draw[->]  (GetMismatchOracle) to node[midway, left] {\(g\)} (groverg);
+        \draw[->]  (groverg) to node[midway, left] {No Mismatch} (return);
+
+        \draw[->, bend left]  (groverh) to node[midway, above] {\(h(i) = 0 \forall i\)} (nooccur);
+        \draw[->]  (groverk) to node[midway, above] {\(k(j) = 0 \forall j\)} (nooccur);
+        \draw[->, bend right]  (groverg) to node[midway, above] {mismatch found} (nooccur);
+
+      \end{tikzpicture}%
+    }
+    \label{fig:quantum-string-matching-alg}
+  \end{figure}
+\end{frame}
+
+
 \begin{frame}{The Algorithm (Part 1)}
   \begin{enumerate}
     \item \textbf{Deterministic-Sampling Preprocessing.}
